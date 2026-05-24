@@ -34,8 +34,38 @@ export default function Navbar({
   };
 
   const [activeTab, setActiveTab] = useState<'real' | 'sync' | 'burner'>('real');
-  const isPetraInjected = typeof window !== 'undefined' && ((window as any).aptos !== undefined || (window as any).petra !== undefined);
-  const isFrame = typeof window !== 'undefined' && window.self !== window.top;
+  const [isPetraInjected, setIsPetraInjected] = useState(false);
+
+  React.useEffect(() => {
+    const checkInjection = () => {
+      const injected = typeof window !== 'undefined' && (
+        (window as any).petra !== undefined ||
+        (window as any).aptos !== undefined ||
+        (window as any).martian !== undefined ||
+        (window as any).pontem !== undefined ||
+        (window as any).rise !== undefined
+      );
+      setIsPetraInjected(injected);
+    };
+    checkInjection();
+
+    const timer = setTimeout(checkInjection, 300);
+    const fallbackTimer = setTimeout(checkInjection, 1200);
+
+    window.addEventListener("aptosChanged", checkInjection);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(fallbackTimer);
+      window.removeEventListener("aptosChanged", checkInjection);
+    };
+  }, []);
+
+  let isFrame = false;
+  try {
+    isFrame = typeof window !== 'undefined' && window.self !== window.top;
+  } catch (e) {
+    isFrame = true;
+  }
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-white/[0.04] bg-[#030303]/60 backdrop-blur-md">
@@ -206,17 +236,20 @@ export default function Navbar({
                     <div className="p-3 bg-emerald-500/[0.04] border border-emerald-500/20 rounded-xl text-center text-xs">
                       <span className="text-emerald-400 font-bold font-mono tracking-wider flex items-center justify-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                        🟢 PETRA INJECTION DETECTED
+                        🟢 APTOS WALLET DETECTED
                       </span>
-                      <p className="text-[10px] text-gray-400 mt-1">The browser extension is ready for on-chain cryptographic signatures.</p>
+                      <p className="text-[10px] text-gray-400 mt-1">Ready for on-chain cryptographic ledger signatures via your extension.</p>
                     </div>
                   ) : (
-                    <div className="p-3 bg-amber-500/[0.04] border border-amber-500/20 rounded-xl text-xs">
-                      <span className="text-amber-400 font-bold font-mono tracking-wider flex items-center justify-center gap-1.5">
-                        ⚠️ INJECTION BLOCKED / PENDING
+                    <div className="p-3.5 bg-amber-500/[0.03] border border-amber-500/20 rounded-xl text-xs space-y-2">
+                      <span className="text-amber-400 font-bold font-mono tracking-wider flex items-center gap-1.5">
+                        ⚠️ WALLET EXTENSION NOT DETECTED
                       </span>
-                      <p className="text-[10px] text-gray-300 mt-1 text-center">
-                        Petra is not yet authorized or is restricted by an iframe parent sandbox container.
+                      <p className="text-[10.5px] text-gray-300 leading-relaxed">
+                        <strong>English:</strong> Petra or other Aptos wallet extensions were not detected or are locked. Unlock your extension, or switch to the <strong>Manual Sync</strong> or <strong>Sandbox Sim</strong> tabs above!
+                      </p>
+                      <p className="text-[10.5px] text-gray-400 leading-relaxed">
+                        <strong>Hindi:</strong> Petra ya Aptos wallet extension active ya unlocked nahi mila. Extension unlock karein ya uper <strong>Manual Sync</strong> ya <strong>Sandbox Sim</strong> option se bina extension ke test karein!
                       </p>
                     </div>
                   )}
