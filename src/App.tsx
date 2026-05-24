@@ -213,16 +213,19 @@ export default function App() {
 
     if (type === 'petra') {
       // Detect real Petra Wallet injection
-      if (typeof window !== 'undefined' && (window as any).aptos !== undefined) {
+      if (typeof window !== 'undefined' && ((window as any).aptos !== undefined || (window as any).petra !== undefined)) {
         try {
-          const aptosWallet = (window as any).aptos;
+          // Access standard Aptos wallet provider
+          const aptosWallet = (window as any).aptos || (window as any).petra;
+          
+          triggerToast("Connecting to live Petra extension... Check popup!", "info");
           
           // AIP-62 standard wallet connect attempt
           let account;
           try {
             account = await aptosWallet.connect();
           } catch (conErr: any) {
-            // Fallback to standard active account query
+            // Fallback to active account query if already authorized
             if (aptosWallet.account) {
               account = await aptosWallet.account();
             } else {
@@ -231,13 +234,29 @@ export default function App() {
           }
           
           if (!account || !account.address) {
-            throw new Error("Standard Petra Wallet API did not return account details inside the iframe environment.");
+            throw new Error("Petra Wallet API did not return standard account address details.");
+          }
+          
+          // Fetch real live balance on Aptos Testnet dynamically!
+          let liveBalance = 0.0;
+          try {
+            const nodeResponse = await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${account.address}/resources`);
+            if (nodeResponse.ok) {
+              const data = await nodeResponse.json();
+              const coinStore = data.find((r: any) => r.type === "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>");
+              if (coinStore && coinStore.data && coinStore.data.coin) {
+                const val = parseInt(coinStore.data.coin.value);
+                liveBalance = val / 100_000_000; // 8 decimal places
+              }
+            }
+          } catch (bErr) {
+            console.warn("Cannot read Aptos Testnet balance, defaulting to 0.0:", bErr);
           }
           
           setWallet({
             connected: true,
             address: account.address,
-            balance: 5.48, // Live-mock balance fetch of their Petra Testnet account
+            balance: liveBalance,
             walletType: 'petra'
           });
 
@@ -245,48 +264,37 @@ export default function App() {
           const newLog: ActivityLog = {
             id: `log-${Date.now()}`,
             type: "wallet",
-            description: `Aptos Petra Account standard wallet connected: ${account.address.substring(0,12)}... session active.`,
+            description: `Real Petra Wallet connected successfully! Verified address: ${account.address}. Initialized live Aptos Testnet ledger profile with ${liveBalance.toFixed(4)} $APT.`,
             timestamp: new Date().toLocaleTimeString(),
             status: "success"
           };
           setLogs(prev => [newLog, ...prev]);
-          triggerToast("Petra Wallet connected successfully!", "success");
+          triggerToast("Real Petra Wallet linked successfully!", "success");
           setView('dashboard');
         } catch (err: any) {
           const errMsg = err.message || 'Injection Rejected';
-          console.warn("Connection attempt failed:", err);
+          console.warn("Petra connection error details:", err);
           
-          // Detect deprecated, cross-site, or standard petra errors and suggest manual sync fallback
-          if (errMsg.includes('deprecated') || errMsg.includes('window.petra') || errMsg.includes('declined') || errMsg.includes('origin')) {
-            triggerToast("Iframe Sandbox Blocked Petra. Auto-generated fallback secure link...", "info");
+          // Help the user troubleshoot sandboxing blockages
+          if (errMsg.includes('deprecated') || errMsg.includes('window.petra') || errMsg.includes('origin') || errMsg.includes('sandboxed') || errMsg.includes('cross-origin')) {
+            triggerToast("Direct browser connection was blocked by AI Studio iframe sandbox.", "error");
             
-            // Seamlessly fallback to pre-connected simulated active custom account
-            const simulatedAddress = generateAptosAddress();
-            setWallet({
-              connected: true,
-              address: simulatedAddress,
-              balance: 12.50,
-              walletType: 'custom'
-            });
-
-            const fallbackLog: ActivityLog = {
+            // Log informative guides for our user
+            const sandboxErrLog: ActivityLog = {
               id: `log-${Date.now()}`,
               type: "wallet",
-              description: `Standard Petra API connection restricted by iframe sandbox rules. Automatically activated secure synced ledger fallback utilizing simulated hot-node: ${simulatedAddress.substring(0, 14)}...`,
+              description: `🔴 SECURITY EXCEPTION: Petra extension injection blocked by parent iframe sandbox. Tip: Click 'OPEN IN NEW TAB' button on top of wallet modal to connect your real wallet.`,
               timestamp: new Date().toLocaleTimeString(),
-              status: "success"
+              status: "failed"
             };
-            setLogs(prev => [fallbackLog, ...prev]);
-            triggerToast("Active Secure Ledger Fallback activated!", "success");
-            setView('dashboard');
+            setLogs(prev => [sandboxErrLog, ...prev]);
           } else {
-            triggerToast(`Petra Connection Declined: ${errMsg}`, "error");
+            triggerToast(`Petra Connection Failed: ${errMsg}`, "error");
           }
         }
       } else {
-        // Fallback option
-        triggerToast("Petra extension was not detected on-screen. Auto-loading ephemeral lock core...", "info");
-        handleConnectWallet('burner');
+        // Direct help when no wallet standard is detected
+        triggerToast("Aptos Petra extension was not found on your browser. Please install Petra Wallet extension first!", "error");
       }
     } else {
       // Ephemeral Burner Account creation
@@ -432,18 +440,72 @@ export default function App() {
     const file = files.find(f => f.id === fileId);
     if (!file) return;
 
-    if (wallet.balance < 0.00142) {
-      triggerToast("Insufficient Aptos Testnet gas. Request $APT faucet first.", "error");
-      return;
+    let txHashHex = generateMockTxHash();
+
+    // Try a real Aptos transaction if connected via Petra!
+    if (wallet.connected && wallet.walletType === 'petra') {
+      const aptosWallet = (window as any).aptos || (window as any).petra;
+      if (aptosWallet) {
+        triggerToast("Requesting Petra safe-sign verification transaction... Please approve!", "info");
+        try {
+          // Construct entry-function payload on Aptos (self-transfer of 10 Octas = 0.0000001 APT)
+          const payload = {
+            type: "entry_function_payload",
+            function: "0x1::aptos_account::transfer",
+            type_arguments: [],
+            arguments: [wallet.address || "", "10"]
+          };
+          const pendingTx = await aptosWallet.signAndSubmitTransaction(payload);
+          if (pendingTx && pendingTx.hash) {
+            txHashHex = pendingTx.hash;
+            triggerToast("Aptos Testnet ledger entry successfully updated!", "success");
+          } else {
+            throw new Error("No transaction hash returned from Petra.");
+          }
+          
+          // Re-fetch balance
+          try {
+            const nodeResponse = await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${wallet.address}/resources`);
+            if (nodeResponse.ok) {
+              const data = await nodeResponse.json();
+              const coinStore = data.find((r: any) => r.type === "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>");
+              if (coinStore && coinStore.data && coinStore.data.coin) {
+                const val = parseInt(coinStore.data.coin.value);
+                setWallet(prev => ({ ...prev, balance: val / 100_000_000 }));
+              }
+            }
+          } catch (rErr) {
+            console.warn("Could not reload balance:", rErr);
+          }
+
+        } catch (txErr: any) {
+          console.error("Petra transaction signature failed/rejected:", txErr);
+          triggerToast(`Transaction Signature Cancelled: ${txErr.message || 'Rejected'}`, "error");
+          
+          // Log failure
+          const failLog: ActivityLog = {
+            id: `log-${Date.now()}`,
+            type: "wallet",
+            description: `❌ MINT REJECTED: On-chain proof registration for '${file.name}' was cancelled by the user in Petra.`,
+            timestamp: new Date().toLocaleTimeString(),
+            status: "failed"
+          };
+          setLogs(prev => [failLog, ...prev]);
+          return; // Halt register
+        }
+      }
+    } else {
+      if (wallet.balance < 0.00142) {
+        triggerToast("Insufficient Aptos Testnet gas. Request $APT faucet first.", "error");
+        return;
+      }
+
+      // Spend micro gas simulation
+      setWallet(prev => ({
+        ...prev,
+        balance: prev.balance - 0.00142
+      }));
     }
-
-    // Spend micro gas
-    setWallet(prev => ({
-      ...prev,
-      balance: prev.balance - 0.00142
-    }));
-
-    const txHashHex = generateMockTxHash();
 
     // Trigger subtle visual update state
     setFiles(prev => prev.map(f => {

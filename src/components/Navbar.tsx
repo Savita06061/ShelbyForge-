@@ -179,9 +179,26 @@ export default function Navbar({
                 <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-shelby-cyan transition-colors" />
               </button>
 
-              {/* Sandbox Alert warning regarding inside iframes */}
-              <div className="p-3.5 rounded-xl bg-amber-500/[0.03] border border-amber-500/20 text-xs text-amber-300 leading-relaxed font-mono">
-                <span className="font-bold text-amber-400">🚨 Sandboxed Preview Note:</span> Because AI Studio apps run inside direct browser iframe wrappers, standard extensions like Petra often reject connections due to cross-origin injection limits. Use the <strong className="text-white underline">Custom Address Sync</strong> below for a flawless test experience!
+              {/* High-Fidelity Iframe Bypass Warning & Breakout Section */}
+              <div className="p-4 rounded-xl bg-gradient-to-r from-shelby-cyan/10 to-shelby-purple/10 border border-shelby-cyan/30 text-xs space-y-3 leading-relaxed">
+                <div className="flex items-center gap-2 font-display font-bold text-white">
+                  <span className="text-yellow-400">⚠️</span>
+                  <span>How to Connect REAL Petra Wallet / Real Wallet Kaise Connect Karein</span>
+                </div>
+                <p className="text-gray-300 text-[11px] leading-relaxed">
+                  <strong>English:</strong> Injected Chrome extensions (like Petra) are strictly blocked from loading inside standard AI Studio preview iframes due to cross-origin security rules. To connect your <strong>real wallet</strong>, click the button below to open this app in an independent tab!
+                </p>
+                <p className="text-gray-300 text-[11px] leading-relaxed">
+                  <strong>Hindi:</strong> Chrome security regulations ke karan real wallet browser extensions sandboxed iframes me block ho jate hain. Apne <strong>real wallet</strong> ko connect karne ke liye niche click karke app ko pure browser tab me open karein!
+                </p>
+                <a 
+                  href={window.location.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 px-3 rounded-lg bg-shelby-cyan text-black hover:bg-white text-center font-display font-bold text-xs block transition-all shadow-lg hover:shadow-shelby-cyan/20 cursor-pointer"
+                >
+                  ↗️ OPEN IN NEW TAB (REAL CONNECT BYPASS)
+                </a>
               </div>
 
               {/* Option 2: Custom Aptos Address Sync (Professional Ledger Fallback) */}
