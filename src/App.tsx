@@ -233,14 +233,34 @@ export default function App() {
             }
           }
           
-          if (!account || !account.address) {
-            throw new Error("Petra Wallet API did not return standard account address details.");
+          let resolvedAddress = "";
+          if (account) {
+            if (typeof account === 'string') {
+              resolvedAddress = account;
+            } else if (typeof account === 'object') {
+              resolvedAddress = account.address || (account as any).addressHex || "";
+            }
+          }
+          
+          if (!resolvedAddress) {
+            try {
+              const activeAcc = await aptosWallet.account();
+              if (activeAcc) {
+                resolvedAddress = typeof activeAcc === 'string' ? activeAcc : (activeAcc.address || "");
+              }
+            } catch (accErr) {
+              console.warn("Could not query fallback address:", accErr);
+            }
+          }
+
+          if (!resolvedAddress) {
+            throw new Error("Petra Wallet connected but did not return standard account address details.");
           }
           
           // Fetch real live balance on Aptos Testnet dynamically!
           let liveBalance = 0.0;
           try {
-            const nodeResponse = await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${account.address}/resources`);
+            const nodeResponse = await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${resolvedAddress}/resources`);
             if (nodeResponse.ok) {
               const data = await nodeResponse.json();
               const coinStore = data.find((r: any) => r.type === "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>");
@@ -255,7 +275,7 @@ export default function App() {
           
           setWallet({
             connected: true,
-            address: account.address,
+            address: resolvedAddress,
             balance: liveBalance,
             walletType: 'petra'
           });
@@ -264,7 +284,7 @@ export default function App() {
           const newLog: ActivityLog = {
             id: `log-${Date.now()}`,
             type: "wallet",
-            description: `Real Petra Wallet connected successfully! Verified address: ${account.address}. Initialized live Aptos Testnet ledger profile with ${liveBalance.toFixed(4)} $APT.`,
+            description: `Real Petra Wallet connected successfully! Verified address: ${resolvedAddress}. Initialized live Aptos Testnet ledger profile with ${liveBalance.toFixed(4)} $APT.`,
             timestamp: new Date().toLocaleTimeString(),
             status: "success"
           };
