@@ -1,0 +1,6 @@
+{
+  "name": "ShelbyForge",
+  "description": "Forge Your Verifiable Storage on Shelby + Aptos Testnet. Cryptographic proof registration and secure hot vault with ultra-premium cyber dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
