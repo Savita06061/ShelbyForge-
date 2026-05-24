@@ -34,7 +34,7 @@ export interface WalletState {
   connected: boolean;
   address: string | null;
   balance: number; // APT
-  walletType: 'petra' | 'burner' | null;
+  walletType: 'petra' | 'burner' | 'custom' | null;
 }
 
 export interface ForgeStats {

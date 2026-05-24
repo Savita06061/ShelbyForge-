@@ -130,7 +130,7 @@ export default function DashboardView({
             </div>
           </div>
 
-          {wallet.walletType === 'burner' && (
+          {(wallet.walletType === 'burner' || wallet.walletType === 'custom') && (
             <button
               onClick={handleFaucetClick}
               disabled={claimingFaucet}
