@@ -34,6 +34,7 @@ export interface WalletState {
   connected: boolean;
   address: string | null;
   balance: number; // APT
+  shelbyUsdBalance: number; // ShelbyUSD fee currency
   walletType: 'petra' | 'burner' | 'custom' | null;
 }
 

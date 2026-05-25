@@ -157,6 +157,7 @@ export default function App() {
     connected: false,
     address: null,
     balance: 0,
+    shelbyUsdBalance: 0,
     walletType: null
   });
 
@@ -184,6 +185,7 @@ export default function App() {
             connected: true,
             address: addressStr,
             balance: liveBalance,
+            shelbyUsdBalance: 350.00, // Seed realistic starting ShelbyUSD for professional sandbox payment representation
             walletType: 'petra'
           });
         };
@@ -196,6 +198,7 @@ export default function App() {
             connected: false,
             address: null,
             balance: 0,
+            shelbyUsdBalance: 0,
             walletType: null
           };
         }
@@ -271,6 +274,7 @@ export default function App() {
         connected: true,
         address: customAddress,
         balance: 14.85, // Pre-seeded testnet balance for active simulation
+        shelbyUsdBalance: 350.00, // Seed realistic starting ShelbyUSD for professional sandbox payment
         walletType: 'custom'
       });
 
@@ -339,13 +343,14 @@ export default function App() {
         connected: true,
         address: bAddress,
         balance: 15.00, // Pre-funded Faucet gas
+        shelbyUsdBalance: 250.00, // Pre-funded storage fee tokens
         walletType: 'burner'
       });
 
       const newLog: ActivityLog = {
         id: `log-${Date.now()}`,
         type: "wallet",
-        description: `Ephemeral preview account generated: ${bAddress.substring(0,12)}... funded with +15.00 APT Testnet.`,
+        description: `Ephemeral preview account generated: ${bAddress.substring(0,12)}... funded with +15.00 APT Testnet and +250.00 ShelbyUSD tokens.`,
         timestamp: new Date().toLocaleTimeString(),
         status: "success"
       };
@@ -389,26 +394,33 @@ export default function App() {
     const faucetTx = generateMockTxHash();
     setWallet(prev => ({
       ...prev,
-      balance: prev.balance + 10.00
+      balance: prev.balance + 10.00,
+      shelbyUsdBalance: prev.shelbyUsdBalance + 100.00
     }));
 
     const newLog: ActivityLog = {
       id: `log-${Date.now()}`,
       type: "faucet",
-      description: "Secured Aptos Testnet Faucet Mint (+10.00 APT). Transferred into secure wallet.",
+      description: "Secured Aptos Testnet Faucet Mint (+10.00 APT & +100.00 ShelbyUSD). Transferred into secure wallet.",
       timestamp: new Date().toLocaleTimeString(),
       txHash: faucetTx,
       status: "success"
     };
 
     setLogs(prev => [newLog, ...prev]);
-    triggerToast("Minted +10.00 Testnet APT successfully!", "success");
+    triggerToast("Minted +10.00 Testnet APT & +100.00 ShelbyUSD successfully!", "success");
   };
 
   // Perform browser cryptographic forge process
   const handleAddFile = async (fileObj: File) => {
     if (!wallet.connected) {
       triggerToast("Please connect a wallet to enable the forge.", "error");
+      return;
+    }
+
+    const uploadFee = 10.00;
+    if (wallet.shelbyUsdBalance < uploadFee) {
+      triggerToast(`Insufficient ShelbyUSD balance! Upload requires ${uploadFee.toFixed(2)} ShelbyUSD fee. Mint more using Faucet.`, "error");
       return;
     }
 
@@ -460,15 +472,21 @@ export default function App() {
       
       setFiles(prev => [newFile, ...prev]);
 
+      // Deduct the ShelbyUSD fee from the wallet
+      setWallet(prev => ({
+        ...prev,
+        shelbyUsdBalance: Math.max(0, prev.shelbyUsdBalance - uploadFee)
+      }));
+
       const newLog: ActivityLog = {
         id: `log-${Date.now()}`,
         type: "forge",
-        description: `Local cryptographic hash completed for '${fileObj.name}'. Integrity proof generated. Distributed node allocated: ${allocatedBlockNode}.`,
+        description: `Local cryptographic hash completed for '${fileObj.name}'. Storage fee of -${uploadFee.toFixed(2)} ShelbyUSD successfully deducted from wallet. Distributed node allocated: ${allocatedBlockNode}.`,
         timestamp: new Date().toLocaleTimeString(),
         status: "success"
       };
       setLogs(prev => [newLog, ...prev]);
-      triggerToast(`File forged and secured successfully!`, "success");
+      triggerToast(`File forged successfully! Paid ${uploadFee.toFixed(2)} ShelbyUSD.`, "success");
 
     } catch (e: any) {
       triggerToast(`Cryptographic Forge Interrupted: ${e.message}`, "error");
@@ -625,7 +643,7 @@ export default function App() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#030303] text-gray-200 selection:bg-shelby-cyan/30 flex flex-col justify-between">
+    <main className="relative min-h-screen bg-shelby-dark text-gray-200 selection:bg-shelby-cyan/30 flex flex-col justify-between">
       
       {/* Dynamic particles background */}
       <BackgroundParticles />
@@ -640,10 +658,10 @@ export default function App() {
             className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl shadow-2xl font-mono text-xs flex items-center gap-2 border glass-panel-neon ${
               toast.type === 'success' ? 'border-emerald-500/30 text-emerald-400 font-bold' :
               toast.type === 'error' ? 'border-red-500/30 text-red-400 font-bold' :
-              'border-[#00F0FF]/30 text-white font-medium'
+              'border-shelby-cyan/30 text-white font-medium'
             }`}
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${toast.type === 'success' ? 'bg-emerald-400' : toast.type === 'error' ? 'bg-red-400' : 'bg-[#00F0FF]'} animate-pulse`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${toast.type === 'success' ? 'bg-emerald-400' : toast.type === 'error' ? 'bg-red-400' : 'bg-shelby-cyan'} animate-pulse`} />
             <span>{toast.message}</span>
           </motion.div>
         )}

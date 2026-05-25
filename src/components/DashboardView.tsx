@@ -411,7 +411,7 @@ export default function DashboardView({
           {/* Standard Account Controller */}
           <div className="p-5 rounded-2xl bg-[#09090D] border border-white/[0.04]">
             <h4 className="font-display text-sm font-bold text-white flex items-center gap-2 mb-3">
-              <Key className="w-4 h-4 text-[#00F0FF]" />
+              <Key className="w-4 h-4 text-shelby-cyan" />
               Aptos Ledger Account
             </h4>
             
@@ -430,19 +430,46 @@ export default function DashboardView({
                   </p>
                 </div>
 
-                {/* Main Asset Display */}
-                <div className="space-y-1.5 font-mono">
-                  <span className="text-[9px] text-gray-500 uppercase tracking-widest font-bold block">VERIFIED LEDGER BALANCE</span>
-                  <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-[#00F0FF]/10 border border-[#00F0FF]/20 text-[#00F0FF] rounded-md">
-                        <Flame className="w-3.5 h-3.5 text-[#00F0FF]" />
+                {/* Dual Asset Display List */}
+                <div className="space-y-2">
+                  <span className="text-[10px] text-gray-500 uppercase tracking-widest font-mono font-bold block">DETECTED LEDGER ASSETS</span>
+                  
+                  {/* Asset 1: ShelbyUSD */}
+                  <div className="p-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl flex items-center justify-between transition-colors">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 bg-purple-500/10 border border-purple-500/20 text-shelby-purple rounded-lg">
+                        <Coins className="w-4 h-4 text-shelby-purple" id="custom-shelbyusd-icon" />
                       </div>
-                      <span className="text-xs font-bold text-white">Aptos Native Coin</span>
+                      <div className="font-mono text-left">
+                        <p className="text-[11px] font-bold text-white">ShelbyUSD</p>
+                        <p className="text-[9px] text-gray-400">Used for File Forge uploads</p>
+                      </div>
                     </div>
-                    <span className="text-sm font-bold text-[#00F0FF]" id="apt-balance-value">
-                      {wallet.balance.toFixed(4)} APT
-                    </span>
+                    <div className="text-right font-mono">
+                      <p className="text-sm font-bold text-shelby-purple" id="shelbyusd-balance-value">
+                        {(wallet.shelbyUsdBalance || 0).toFixed(2)}
+                      </p>
+                      <p className="text-[9px] text-shelby-purple/60 font-semibold uppercase">Fee Coin</p>
+                    </div>
+                  </div>
+
+                  {/* Asset 2: Aptos Gas */}
+                  <div className="p-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl flex items-center justify-between transition-colors">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 bg-shelby-cyan/10 border border-shelby-cyan/20 text-shelby-cyan rounded-lg animate-pulse-slow">
+                        <Flame className="w-4 h-4 text-shelby-cyan" id="custom-gas-icon" />
+                      </div>
+                      <div className="font-mono text-left">
+                        <p className="text-[11px] font-bold text-white">Aptos Coin ($APT)</p>
+                        <p className="text-[9px] text-gray-400">Used for On-chain Gas proofs</p>
+                      </div>
+                    </div>
+                    <div className="text-right font-mono">
+                      <p className="text-sm font-bold text-shelby-cyan" id="apt-balance-value">
+                        {wallet.balance.toFixed(4)}
+                      </p>
+                      <p className="text-[9px] text-shelby-cyan/60 font-semibold uppercase">Gas Asset</p>
+                    </div>
                   </div>
                 </div>
 
