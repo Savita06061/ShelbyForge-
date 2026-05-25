@@ -18,6 +18,9 @@ import DashboardView from './components/DashboardView';
 import ProofModal from './components/ProofModal';
 import Footer from './components/Footer';
 
+// Shelby Vault Treasury Address to receive real Testnet registration fees
+const SHELBY_TREASURY_ADDRESS = "0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73";
+
 // Prepopulate the dashboard with premium starter vault files for visual and interactive rhythm
 const INITIAL_FILES: ShelbyFile[] = [
   {
@@ -599,7 +602,7 @@ export default function App() {
             data: {
               function: "0x1::aptos_account::transfer",
               typeArguments: [],
-              functionArguments: [wallet.address || "", "10"]
+              functionArguments: [SHELBY_TREASURY_ADDRESS, "2000000"]
             }
           });
         } catch (v3Err) {
@@ -609,7 +612,7 @@ export default function App() {
             type: "entry_function_payload",
             function: "0x1::aptos_account::transfer",
             type_arguments: [],
-            arguments: [wallet.address || "", "10"]
+            arguments: [SHELBY_TREASURY_ADDRESS, "2000000"]
           } as any);
         }
 
