@@ -553,7 +553,7 @@ export default function App() {
         chunkCount: Math.max(1, Math.min(10, Math.ceil(fileObj.size / (1024 * 100)))),
         integrityScore: 100,
         shelbyStorageNode: result.storageNode,
-        downloadUrl: URL.createObjectURL(fileObj)
+        downloadUrl: result.downloadUrl || URL.createObjectURL(fileObj)
       };
 
       setForgeProgress(100);
