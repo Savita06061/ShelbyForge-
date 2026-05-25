@@ -26,6 +26,7 @@ interface DashboardViewProps {
   loading: boolean;
   loadingProgress: number;
   loadingStage: string;
+  onRefreshBalances?: () => Promise<void>;
 }
 
 export default function DashboardView({
@@ -41,11 +42,13 @@ export default function DashboardView({
   onInspectFile,
   loading,
   loadingProgress,
-  loadingStage
+  loadingStage,
+  onRefreshBalances
 }: DashboardViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const [claimingFaucet, setClaimingFaucet] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // File size formatter
@@ -96,6 +99,17 @@ export default function DashboardView({
       onClaimFaucet();
       setClaimingFaucet(false);
     }, 1500);
+  };
+
+  const handleRefreshClick = async () => {
+    if (onRefreshBalances) {
+      setRefreshing(true);
+      try {
+        await onRefreshBalances();
+      } finally {
+        setRefreshing(false);
+      }
+    }
   };
 
   return (
@@ -410,10 +424,23 @@ export default function DashboardView({
           
           {/* Standard Account Controller */}
           <div className="p-5 rounded-2xl bg-[#09090D] border border-white/[0.04]">
-            <h4 className="font-display text-sm font-bold text-white flex items-center gap-2 mb-3">
-              <Key className="w-4 h-4 text-shelby-cyan" />
-              Aptos Ledger Account
-            </h4>
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="font-display text-sm font-bold text-white flex items-center gap-2">
+                <Key className="w-4 h-4 text-shelby-cyan" />
+                Aptos Ledger Account
+              </h4>
+              {wallet.connected && onRefreshBalances && (
+                <button
+                  onClick={handleRefreshClick}
+                  disabled={refreshing}
+                  className="p-1 px-2 text-[10px] font-mono border border-white/5 rounded bg-white/5 hover:bg-white/10 hover:border-shelby-cyan/30 text-gray-400 hover:text-white transition-all flex items-center gap-1 cursor-pointer"
+                  title="Force ledger sync"
+                >
+                  <RefreshCw className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} />
+                  <span>{refreshing ? 'Syncing...' : 'Sync'}</span>
+                </button>
+              )}
+            </div>
             
             {wallet.connected && wallet.address ? (
               <div className="space-y-4">
@@ -495,19 +522,19 @@ export default function DashboardView({
           </div>
 
           {/* Activity Feeds */}
-          <div className="p-5 rounded-2xl bg-[#09090D] border border-white/[0.04] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#09090D] border border-white/[0.04] space-y-3">
             <h4 className="font-display text-sm font-bold text-white flex items-center gap-2">
               <RefreshCw className="w-4 h-4 text-shelby-purple" />
               Ecosystem Activity Logs
             </h4>
 
-            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+            <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
               {logs.length === 0 ? (
                 <p className="text-xs text-gray-500 font-mono text-center py-4">
                   Vault queue empty. Actions execute real-time logs here.
                 </p>
               ) : (
-                logs.map((log) => (
+                logs.slice(0, 3).map((log) => (
                   <div 
                     key={log.id} 
                     className="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-[10px] space-y-1"
@@ -542,17 +569,6 @@ export default function DashboardView({
                 ))
               )}
             </div>
-          </div>
-
-          {/* Web3 Educational Hint */}
-          <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5">
-            <HelpCircle className="w-5 h-5 text-shelby-cyan mb-2" />
-            <h5 className="text-xs font-bold text-white uppercase tracking-wider mb-1 font-mono">
-              The Shelby Cryptographic Paradigm
-            </h5>
-            <p className="text-[11px] text-gray-400 leading-relaxed font-mono">
-              In centralized architectures, file hosts control files and metadata. In Shelby’s verifiableHot storage scheme, your browser computes root hashes. Changing a single bit in your file alters the SHA-256 completely, rendering the Aptos ledger mismatch immediately visible. Absolute data security.
-            </p>
           </div>
 
         </div>
