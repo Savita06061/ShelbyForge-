@@ -20,8 +20,8 @@ import ProofModal from './components/ProofModal';
 import FaucetModal from './components/FaucetModal';
 import Footer from './components/Footer';
 
-// Shelby Vault Treasury Address to receive real Testnet registration fees
-const SHELBY_TREASURY_ADDRESS = "0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73";
+// Shelby Vault Treasury Address to receive real Devnet registration fees
+const SHELBY_TREASURY_ADDRESS = "0x1b18363a9f1fe5e6ebf247daba5cc1c18052bb232efdc4c50f556053922d98e1";
 
 // Instantiate the official Shelby Protocol SDK for Aptos Testnet with on-chain parameters
 const shelbyClient = new ShelbyClient({
@@ -160,9 +160,9 @@ export default function App() {
       if (announcedNetworkKey !== currentKey) {
         setAnnouncedNetworkKey(currentKey);
         if (!isWrongNetwork) {
-          triggerToast("Connected to Shelby Devnet", "success");
+          triggerToast(" Connected to Shelby Devnet", "success");
         } else {
-          triggerToast("Please switch to Shelby Devnet", "error");
+          triggerToast(" Please switch to Shelby Devnet", "error");
         }
       }
     } else if (!adapterConnected) {

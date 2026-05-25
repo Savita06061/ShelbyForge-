@@ -117,7 +117,7 @@ export class ShelbyClient {
       return {
         data: {
           function: "0x1::coin::transfer",
-          typeArguments: ["0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73::shelby_coin::ShelbyUSD"],
+          typeArguments: ["0x1b18363a9f1fe5e6ebf247daba5cc1c18052bb232efdc4c50f556053922d98e1::shelby_usd::ShelbyUSD"],
           functionArguments: [recipient, rawCoinAmount.toString()]
         }
       };

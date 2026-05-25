@@ -37,7 +37,14 @@ export async function fetchOnChainBalances(address: string): Promise<OnChainBala
         coinType: "0x1::aptos_coin::AptosCoin"
       });
     } catch (e) {
-      console.warn("APT balance lookup failed via getAccountCoinAmount:", e);
+      try {
+        rawApt = await aptos.getAccountCoinAmount({
+          accountAddress: address,
+          coinType: "0xa::aptos_coin::AptosCoin"
+        });
+      } catch (e2) {
+        console.warn("APT balance lookup failed via getAccountCoinAmount (both 0x1 and 0xa):", e2);
+      }
     }
     const aptBalance = rawApt / 100_000_000; // 8 decimals standard for Aptos Coin
 
@@ -46,7 +53,7 @@ export async function fetchOnChainBalances(address: string): Promise<OnChainBala
     try {
       rawShelby = await aptos.getAccountCoinAmount({
         accountAddress: address,
-        coinType: "0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73::shelby_coin::ShelbyUSD"
+        coinType: "0x1b18363a9f1fe5e6ebf247daba5cc1c18052bb232efdc4c50f556053922d98e1::shelby_usd::ShelbyUSD"
       });
     } catch (e) {
       console.warn("ShelbyUSD balance lookup failed via getAccountCoinAmount:", e);
