@@ -202,8 +202,7 @@ export default function App() {
               connected: true,
               address: addressStr,
               balance: balances.aptBalance,
-              // Fallback to active sandbox representation only if on-chain resources don't explicitly override it yet
-              shelbyUsdBalance: balances.shelbyUsdBalance > 0 ? balances.shelbyUsdBalance : (prev.shelbyUsdBalance || 350.00),
+              shelbyUsdBalance: balances.shelbyUsdBalance,
               walletType: 'petra'
             };
           });
@@ -304,13 +303,13 @@ export default function App() {
       (window as any).__customAptosAddress = undefined;
       triggerToast("Querying verified balances for sync ledger...", "info");
       
-      let liveAptBalance = 14.85;
-      let liveShelbyUsdBalance = 350.00;
+      let liveAptBalance = 0;
+      let liveShelbyUsdBalance = 0;
       
       try {
         const balances = await fetchOnChainBalances(customAddress);
         liveAptBalance = balances.aptBalance;
-        liveShelbyUsdBalance = balances.shelbyUsdBalance > 0 ? balances.shelbyUsdBalance : 350.00;
+        liveShelbyUsdBalance = balances.shelbyUsdBalance;
       } catch (err) {
         console.warn("Manual custom sync balance query failed:", err);
       }
@@ -411,12 +410,12 @@ export default function App() {
         triggerToast("Sandbox simulator is already synced to memory.", "success");
         return;
       }
-      triggerToast("Syncing live assets with Aptos Testnet...", "info");
+      triggerToast("Syncing live assets with Shelby Devnet...", "info");
       const balances = await fetchOnChainBalances(wallet.address);
       setWallet(prev => ({
         ...prev,
         balance: balances.aptBalance,
-        shelbyUsdBalance: balances.shelbyUsdBalance > 0 ? balances.shelbyUsdBalance : prev.shelbyUsdBalance
+        shelbyUsdBalance: balances.shelbyUsdBalance
       }));
       triggerToast("On-chain ledger assets successfully synchronized!", "success");
     } else {
@@ -601,8 +600,8 @@ export default function App() {
           const balances = await fetchOnChainBalances(wallet.address || "");
           setWallet(prev => ({
             ...prev,
-            balance: balances.aptBalance > 0 ? balances.aptBalance : prev.balance,
-            shelbyUsdBalance: balances.shelbyUsdBalance > 0 ? balances.shelbyUsdBalance : prev.shelbyUsdBalance
+            balance: balances.aptBalance,
+            shelbyUsdBalance: balances.shelbyUsdBalance
           }));
         }, 4000);
       }
@@ -666,7 +665,7 @@ export default function App() {
           setWallet(prev => ({
             ...prev,
             balance: balances.aptBalance,
-            shelbyUsdBalance: balances.shelbyUsdBalance > 0 ? balances.shelbyUsdBalance : prev.shelbyUsdBalance
+            shelbyUsdBalance: balances.shelbyUsdBalance
           }));
         } catch (rErr) {
           console.warn("Could not reload balance:", rErr);
