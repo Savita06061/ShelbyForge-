@@ -408,11 +408,11 @@ export default function DashboardView({
         {/* Right Sidebar Activity, Accounts & Explanations */}
         <div className="lg:col-span-4 space-y-8">
           
-          {/* Ephemeral Account Controller */}
+          {/* Standard Account Controller */}
           <div className="p-5 rounded-2xl bg-[#09090D] border border-white/[0.04]">
             <h4 className="font-display text-sm font-bold text-white flex items-center gap-2 mb-3">
-              <Key className="w-4 h-4 text-shelby-cyan animate-pulse" />
-              Cryptographic Secure Core
+              <Key className="w-4 h-4 text-[#00F0FF]" />
+              Aptos Ledger Account
             </h4>
             
             {wallet.connected && wallet.address ? (
@@ -420,7 +420,7 @@ export default function DashboardView({
                 {/* Account details */}
                 <div className="p-3 bg-black/40 border border-white/5 rounded-xl text-xs font-mono space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-500 text-[9px] uppercase tracking-wider">VERIFIABLE LOCK ENGINE</span>
+                    <span className="text-gray-500 text-[9px] uppercase tracking-wider">SECURE SIGNER KEY</span>
                     <span className="text-[#00F0FF] text-[9px] font-bold bg-[#00F0FF]/10 px-2 py-0.5 rounded-full border border-[#00F0FF]/25">
                       {wallet.walletType?.toUpperCase()}
                     </span>
@@ -430,70 +430,38 @@ export default function DashboardView({
                   </p>
                 </div>
 
-                {/* Dual Asset Display List */}
-                <div className="space-y-2">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-widest font-mono font-bold block">DETECTED LEDGER ASSETS</span>
-                  
-                  {/* Asset 1: ShelbyUSD */}
-                  <div className="p-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl flex items-center justify-between transition-colors">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-purple-500/10 border border-purple-500/20 text-[#B026FF] rounded-lg">
-                        <Coins className="w-4 h-4 text-[#B026FF]" id="custom-shelbyusd-icon" />
+                {/* Main Asset Display */}
+                <div className="space-y-1.5 font-mono">
+                  <span className="text-[9px] text-gray-500 uppercase tracking-widest font-bold block">VERIFIED LEDGER BALANCE</span>
+                  <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-[#00F0FF]/10 border border-[#00F0FF]/20 text-[#00F0FF] rounded-md">
+                        <Flame className="w-3.5 h-3.5 text-[#00F0FF]" />
                       </div>
-                      <div className="font-mono text-left">
-                        <p className="text-[11px] font-bold text-white">ShelbyUSD</p>
-                        <p className="text-[9px] text-gray-400">Used for File Forge uploads</p>
-                      </div>
+                      <span className="text-xs font-bold text-white">Aptos Native Coin</span>
                     </div>
-                    <div className="text-right font-mono">
-                      <p className="text-sm font-bold text-[#B026FF]" id="shelbyusd-balance-value">
-                        {wallet.shelbyUsdBalance.toFixed(2)}
-                      </p>
-                      <p className="text-[9px] text-[#B026FF]/60 font-semibold uppercase">Fee Coin</p>
-                    </div>
-                  </div>
-
-                  {/* Asset 2: Aptos Gas */}
-                  <div className="p-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl flex items-center justify-between transition-colors">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00F0FF]/10 border border-[#00F0FF]/20 text-[#00F0FF] rounded-lg animate-pulse-slow">
-                        <Flame className="w-4 h-4 text-[#00F0FF]" id="custom-gas-icon" />
-                      </div>
-                      <div className="font-mono text-left">
-                        <p className="text-[11px] font-bold text-white">Aptos Coin ($APT)</p>
-                        <p className="text-[9px] text-gray-400">Used for On-chain Gas proofs</p>
-                      </div>
-                    </div>
-                    <div className="text-right font-mono">
-                      <p className="text-sm font-bold text-[#00F0FF]" id="apt-balance-value">
-                        {wallet.balance.toFixed(4)}
-                      </p>
-                      <p className="text-[9px] text-[#00F0FF]/60 font-semibold uppercase">Gas Asset</p>
-                    </div>
+                    <span className="text-sm font-bold text-[#00F0FF]" id="apt-balance-value">
+                      {wallet.balance.toFixed(4)} APT
+                    </span>
                   </div>
                 </div>
 
                 {/* Ledger metadata */}
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="p-2.5 bg-black/20 border border-white/5 rounded-lg flex flex-col justify-between">
-                    <span className="text-gray-500 text-[9px]">LEDGER SYSTEM</span>
-                    <span className="font-bold text-white mt-1 text-[11px]">Aptos Testnet</span>
+                    <span className="text-gray-500 text-[8px] uppercase">CHAIN LEDGER</span>
+                    <span className="font-bold text-white mt-1 text-[10px]">Aptos Testnet</span>
                   </div>
                   <div className="p-2.5 bg-black/20 border border-white/5 rounded-lg flex flex-col justify-between">
-                    <span className="text-gray-500 text-[9px]">LEDGER NONCE</span>
-                    <span className="font-bold text-white mt-1 text-[11px]">{files.filter(f => f.isRegistered).length * 2 + 1}</span>
+                    <span className="text-gray-500 text-[8px] uppercase">PROOF NONCE</span>
+                    <span className="font-bold text-white mt-1 text-[10px]">{files.filter(f => f.isRegistered).length * 2 + 1}</span>
                   </div>
-                </div>
-
-                <div className="text-[10px] font-mono text-gray-500 flex items-center gap-1.5 max-w-sm">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
-                  <span>Interactive coin fees automatically routed dynamically.</span>
                 </div>
               </div>
             ) : (
               <div className="text-center py-6">
                 <p className="text-xs text-gray-400">
-                  Connect a wallet to view secure parameters and pay with Aptos Testnet tokens.
+                  Connect your Aptos Web3 wallet to sign cryptographic proofs on the Testnet ledger.
                 </p>
               </div>
             )}

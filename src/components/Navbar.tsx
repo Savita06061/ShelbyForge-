@@ -142,19 +142,11 @@ export default function Navbar({
             {/* Wallet State Connector */}
             {wallet.connected && wallet.address ? (
               <div className="flex items-center gap-2">
-                <div className="hidden lg:flex items-center gap-2 border border-white/5 bg-black/20 rounded-xl px-2.5 py-1 text-right font-mono text-[10px]">
-                  <div className="flex flex-col pr-2 border-r border-white/10">
-                    <span className="text-gray-500 text-[8px] uppercase tracking-wider">SHEUSD</span>
-                    <span className="font-bold text-[#B026FF]">
-                      {wallet.shelbyUsdBalance.toFixed(1)}
-                    </span>
-                  </div>
-                  <div className="flex flex-col pl-1">
-                    <span className="text-gray-500 text-[8px] uppercase tracking-wider">APTOS</span>
-                    <span className="font-bold text-[#00F0FF]">
-                      {wallet.balance.toFixed(2)}
-                    </span>
-                  </div>
+                <div className="hidden sm:flex flex-col text-right font-mono text-[10px] mr-1">
+                  <span className="text-gray-500 text-[8px] uppercase tracking-widest font-bold">APTOS BALANCE</span>
+                  <span className="font-bold text-[#00F0FF] text-xs">
+                    {wallet.balance.toFixed(4)} APT
+                  </span>
                 </div>
                 
                 <div className="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-xl px-3 py-1.5 font-mono">

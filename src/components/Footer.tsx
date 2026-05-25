@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Twitter, Github, MessageSquare, Anchor, ShieldCheck } from 'lucide-react';
+import { Twitter, ShieldCheck } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -11,19 +11,19 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         
         {/* Core Layout Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 pb-8 border-b border-white/[0.03]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 pb-8 border-b border-white/[0.03]">
           
           {/* Brand Col */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
               <svg 
-                className="w-5 h-5 filter drop-shadow-[0_0_5px_rgba(0,240,255,0.4)]" 
+                className="w-5 h-5 filter drop-shadow-[0_0_5px_rgba(59,130,246,0.4)]" 
                 viewBox="0 0 100 100" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M50 5L90 28.2V71.8L50 95L10 71.8V28.2L50 5Z" stroke="#00F0FF" strokeWidth="3" strokeLinejoin="round" />
-                <path d="M30 35H70L30 65H70" stroke="#00F0FF" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M50 5L90 28.2V71.8L50 95L10 71.8V28.2L50 5Z" stroke="#3b82f6" strokeWidth="3" strokeLinejoin="round" />
+                <path d="M30 35H70L30 65H70" stroke="#3b82f6" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <h4 className="font-display font-black text-sm tracking-wider text-white">
                 SHELBY<span className="text-shelby-cyan">FORGE</span>
@@ -38,36 +38,9 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Built By Section - HIGHLIGHTED */}
-          <div className="space-y-3">
-            <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#00F0FF]">CREATOR</h5>
-            <div className="flex flex-col gap-2">
-              <a 
-                href="https://github.com/Savita06061"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-xs font-bold bg-[#00F0FF]/10 border border-[#00F0FF]/25 hover:border-[#00F0FF]/60 hover:bg-[#00F0FF]/15 transition-all rounded-lg px-2.5 py-1.5 text-shelby-cyan text-shadow-[0_0_8px_rgba(0,240,255,0.3)] inline-flex items-center gap-1.5 w-fit"
-              >
-                <Github className="w-3.5 h-3.5" />
-                <span>@Savita06061</span>
-              </a>
-              <div 
-                className="font-mono text-[11px] text-gray-400 bg-white/5 border border-white/5 rounded-lg px-2.5 py-1.5 inline-flex items-center gap-1.5 w-fit select-all cursor-pointer"
-                title="Click to copy Discord Username"
-                onClick={() => {
-                  navigator.clipboard.writeText("@amanpatel2533");
-                  alert("Discord username @amanpatel2533 copied to clipboard!");
-                }}
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-[#B026FF]" />
-                <span>Discord: <strong className="text-white">@amanpatel2533</strong></span>
-              </div>
-            </div>
-          </div>
-
           {/* Social Social Links */}
           <div className="space-y-3">
-            <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#B026FF]">COMMUNITY</h5>
+            <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#6366f1]">COMMUNITY</h5>
             <div className="flex gap-4">
               <a 
                 href="https://x.com/Web3Vibesz0g" 
@@ -78,28 +51,9 @@ export default function Footer() {
               >
                 <Twitter className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
               </a>
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText("@amanpatel2533");
-                  alert("Discord username @amanpatel2533 copied!");
-                }}
-                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
-                title="Discord: @amanpatel2533"
-              >
-                <MessageSquare className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
-              </button>
-              <a 
-                href="https://github.com/Savita06061" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors"
-                title="GitHub Profile (@Savita06061)"
-              >
-                <Github className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
-              </a>
             </div>
             <div className="text-[11px] font-mono text-gray-400 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#00F0FF]" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#3b82f6]" />
               <span>Vetted Web3 Node Verified</span>
             </div>
           </div>
