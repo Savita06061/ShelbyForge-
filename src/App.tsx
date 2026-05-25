@@ -130,19 +130,45 @@ export default function App() {
     network
   } = useWallet();
 
-  const isWrongNetwork = !!(
-    adapterConnected && 
-    network && 
+  const isShelbyDevnet = !!(
+    adapterConnected &&
+    network &&
     (
-      network.name?.toLowerCase() !== 'custom' &&
-      !network.url?.includes('shelby') &&
-      !String(network.name || '').toLowerCase().includes('shelby')
+      network.url?.includes("shelbynet.shelby.xyz") ||
+      network.url?.includes("shelby") ||
+      String(network.name || '').toLowerCase().includes("shelby") ||
+      (network.name?.toLowerCase() === 'custom' && network.url?.includes('shelby'))
     )
+  );
+
+  const isWrongNetwork = !!(
+    adapterConnected &&
+    network &&
+    !isShelbyDevnet
   );
 
   const [view, setView] = useState<'landing' | 'dashboard'>('landing');
   const [files, setFiles] = useState<ShelbyFile[]>(INITIAL_FILES);
   const [logs, setLogs] = useState<ActivityLog[]>(INITIAL_LOGS);
+
+  const [announcedNetworkKey, setAnnouncedNetworkKey] = useState<string | null>(null);
+
+  // Trigger popup when network changes or connection occurs
+  useEffect(() => {
+    if (adapterConnected && network) {
+      const currentKey = `${adapterAccount?.address || ''}-${isWrongNetwork ? 'wrong' : 'correct'}-${network.name || ''}-${network.url || ''}`;
+      if (announcedNetworkKey !== currentKey) {
+        setAnnouncedNetworkKey(currentKey);
+        if (!isWrongNetwork) {
+          triggerToast("Connected to Shelby Devnet", "success");
+        } else {
+          triggerToast("Please switch to Shelby Devnet", "error");
+        }
+      }
+    } else if (!adapterConnected) {
+      setAnnouncedNetworkKey(null);
+    }
+  }, [adapterConnected, network, adapterAccount, isWrongNetwork, announcedNetworkKey]);
 
   // Support for light / dark theme state (inspired by user mockup representation)
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -236,7 +262,7 @@ export default function App() {
       isActive = false;
       clearInterval(ticker);
     };
-  }, [adapterConnected, adapterAccount, adapterWallet]);
+  }, [adapterConnected, adapterAccount, adapterWallet, network]);
 
   // Calculate vault statistics dynamically
   const getStats = (): ForgeStats => {

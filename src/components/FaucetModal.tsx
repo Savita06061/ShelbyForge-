@@ -155,24 +155,50 @@ export default function FaucetModal({
       // Propose interactive signature to emulate real state update
       let txHash = "";
       if (wallet.walletType === 'petra' || wallet.walletType === 'custom') {
-        const payload = {
+        const payloadMint = {
           data: {
-            function: "0x1::aptos_account::transfer",
+            function: "0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73::shelby_coin::mint",
             typeArguments: [],
-            functionArguments: ["0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73", "500000"] // Small contribution fee to trigger ledger mutation
+            functionArguments: ["250000000"] // 250 ShelbyUSD (6 decimals)
           }
         };
         try {
-          const pending = await signAndSubmitTransaction(payload);
+          const pending = await signAndSubmitTransaction(payloadMint);
           txHash = pending?.hash || "";
-        } catch {
-          const pending = await signAndSubmitTransaction({
-            type: "entry_function_payload",
-            function: "0x1::aptos_account::transfer",
-            type_arguments: [],
-            arguments: ["0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73", "500000"]
-          } as any);
-          txHash = pending?.hash || "";
+        } catch (mintErr) {
+          console.warn("Direct shelby_coin::mint failed, trying shelby_coin::faucet:", mintErr);
+          try {
+            const payloadFaucet = {
+              data: {
+                function: "0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73::shelby_coin::faucet",
+                typeArguments: [],
+                functionArguments: []
+              }
+            };
+            const pending = await signAndSubmitTransaction(payloadFaucet);
+            txHash = pending?.hash || "";
+          } catch (faucetErr) {
+            console.warn("Direct shelby_coin::faucet failed, trying legacy transfer contribution:", faucetErr);
+            const payloadTransfer = {
+              data: {
+                function: "0x1::aptos_account::transfer",
+                typeArguments: [],
+                functionArguments: ["0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73", "500000"] // 0.005 APT contribution
+              }
+            };
+            try {
+              const pending = await signAndSubmitTransaction(payloadTransfer);
+              txHash = pending?.hash || "";
+            } catch (legacyErr) {
+              const pending = await signAndSubmitTransaction({
+                type: "entry_function_payload",
+                function: "0x1::aptos_account::transfer",
+                type_arguments: [],
+                arguments: ["0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73", "500000"]
+              } as any);
+              txHash = pending?.hash || "";
+            }
+          }
         }
       }
 

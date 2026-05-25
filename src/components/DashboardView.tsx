@@ -504,7 +504,7 @@ export default function DashboardView({
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="p-2.5 bg-black/20 border border-white/5 rounded-lg flex flex-col justify-between">
                     <span className="text-gray-500 text-[8px] uppercase">CHAIN LEDGER</span>
-                    <span className="font-bold text-white mt-1 text-[10px]">Aptos Testnet</span>
+                    <span className="font-bold text-white mt-1 text-[10px]">Shelby Devnet</span>
                   </div>
                   <div className="p-2.5 bg-black/20 border border-white/5 rounded-lg flex flex-col justify-between">
                     <span className="text-gray-500 text-[8px] uppercase">PROOF NONCE</span>
