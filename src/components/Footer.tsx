@@ -40,13 +40,29 @@ export default function Footer() {
 
           {/* Built By Section - HIGHLIGHTED */}
           <div className="space-y-3">
-            <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#00F0FF]">BUILT BY</h5>
-            <div className="flex items-center gap-2 text-white">
-              <span className="font-mono text-sm font-bold bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-shelby-cyan text-shadow-[0_0_8px_rgba(0,240,255,0.3)]">
-                Web3Vibesz0g
-              </span>
+            <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#00F0FF]">CREATOR</h5>
+            <div className="flex flex-col gap-2">
+              <a 
+                href="https://github.com/Savita06061"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs font-bold bg-[#00F0FF]/10 border border-[#00F0FF]/25 hover:border-[#00F0FF]/60 hover:bg-[#00F0FF]/15 transition-all rounded-lg px-2.5 py-1.5 text-shelby-cyan text-shadow-[0_0_8px_rgba(0,240,255,0.3)] inline-flex items-center gap-1.5 w-fit"
+              >
+                <Github className="w-3.5 h-3.5" />
+                <span>@Savita06061</span>
+              </a>
+              <div 
+                className="font-mono text-[11px] text-gray-400 bg-white/5 border border-white/5 rounded-lg px-2.5 py-1.5 inline-flex items-center gap-1.5 w-fit select-all cursor-pointer"
+                title="Click to copy Discord Username"
+                onClick={() => {
+                  navigator.clipboard.writeText("@amanpatel2533");
+                  alert("Discord username @amanpatel2533 copied to clipboard!");
+                }}
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-[#B026FF]" />
+                <span>Discord: <strong className="text-white">@amanpatel2533</strong></span>
+              </div>
             </div>
-            <p className="text-[10px] text-gray-400">Verifiably forged secure interfaces.</p>
           </div>
 
           {/* Social Social Links */}
@@ -58,25 +74,26 @@ export default function Footer() {
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors text-shadow"
-                title="Twitter / X"
+                title="X (Twitter) Profile"
               >
                 <Twitter className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
               </a>
-              <a 
-                href="https://discord.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors"
-                title="Discord"
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText("@amanpatel2533");
+                  alert("Discord username @amanpatel2533 copied!");
+                }}
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                title="Discord: @amanpatel2533"
               >
                 <MessageSquare className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
-              </a>
+              </button>
               <a 
-                href="https://github.com" 
+                href="https://github.com/Savita06061" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors"
-                title="GitHub"
+                title="GitHub Profile (@Savita06061)"
               >
                 <Github className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
               </a>
@@ -91,9 +108,6 @@ export default function Footer() {
         {/* Legal Disclaimer */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono">
           <p>© 2026 ShelbyForge. All rights reserved.</p>
-          <p className="text-gray-400 bg-white/5 border border-white/5 rounded-full px-3 py-1 font-mono text-[10px] tracking-tight">
-            Community Project — Not Officially Affiliated with Aptos or Shelby Inc.
-          </p>
         </div>
 
       </div>

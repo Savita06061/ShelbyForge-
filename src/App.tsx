@@ -157,6 +157,7 @@ export default function App() {
     connected: false,
     address: null,
     balance: 0,
+    shelbyUsdBalance: 0,
     walletType: null
   });
 
@@ -184,6 +185,7 @@ export default function App() {
             connected: true,
             address: addressStr,
             balance: liveBalance,
+            shelbyUsdBalance: 350.00, // Seed realistic starting ShelbyUSD for professional sandbox payment representation
             walletType: 'petra'
           });
         };
@@ -196,6 +198,7 @@ export default function App() {
             connected: false,
             address: null,
             balance: 0,
+            shelbyUsdBalance: 0,
             walletType: null
           };
         }
@@ -271,6 +274,7 @@ export default function App() {
         connected: true,
         address: customAddress,
         balance: 14.85, // Pre-seeded testnet balance for active simulation
+        shelbyUsdBalance: 350.00, // Seed realistic starting ShelbyUSD for professional sandbox payment
         walletType: 'custom'
       });
 
@@ -339,13 +343,14 @@ export default function App() {
         connected: true,
         address: bAddress,
         balance: 15.00, // Pre-funded Faucet gas
+        shelbyUsdBalance: 250.00, // Pre-funded storage fee tokens
         walletType: 'burner'
       });
 
       const newLog: ActivityLog = {
         id: `log-${Date.now()}`,
         type: "wallet",
-        description: `Ephemeral preview account generated: ${bAddress.substring(0,12)}... funded with +15.00 APT Testnet Faucet coins.`,
+        description: `Ephemeral preview account generated: ${bAddress.substring(0,12)}... funded with +15.00 APT Testnet and +250.00 ShelbyUSD tokens.`,
         timestamp: new Date().toLocaleTimeString(),
         status: "success"
       };
@@ -367,6 +372,7 @@ export default function App() {
       connected: false,
       address: null,
       balance: 0,
+      shelbyUsdBalance: 0,
       walletType: null
     });
     
@@ -383,31 +389,38 @@ export default function App() {
 
   // Claim Testnet faucet
   const handleClaimFaucet = () => {
-    if (!wallet.connected || wallet.walletType !== 'burner') return;
+    if (!wallet.connected) return;
 
     const faucetTx = generateMockTxHash();
     setWallet(prev => ({
       ...prev,
-      balance: prev.balance + 10.00
+      balance: prev.balance + 10.00,
+      shelbyUsdBalance: prev.shelbyUsdBalance + 100.00
     }));
 
     const newLog: ActivityLog = {
       id: `log-${Date.now()}`,
       type: "faucet",
-      description: "Secured Aptos Testnet Faucet Mint (+10.00 APT). Transferred into Ephemeral vault wallet.",
+      description: "Secured Aptos Testnet Faucet Mint (+10.00 APT & +100.00 ShelbyUSD). Transferred into secure wallet.",
       timestamp: new Date().toLocaleTimeString(),
       txHash: faucetTx,
       status: "success"
     };
 
     setLogs(prev => [newLog, ...prev]);
-    triggerToast("Minted +10.00 Testnet APT successfully!", "success");
+    triggerToast("Minted +10.00 Testnet APT & +100.00 ShelbyUSD successfully!", "success");
   };
 
   // Perform browser cryptographic forge process
   const handleAddFile = async (fileObj: File) => {
     if (!wallet.connected) {
       triggerToast("Please connect a wallet to enable the forge.", "error");
+      return;
+    }
+
+    const uploadFee = 10.00;
+    if (wallet.shelbyUsdBalance < uploadFee) {
+      triggerToast(`Insufficient ShelbyUSD balance! Upload requires ${uploadFee.toFixed(2)} ShelbyUSD fee. Mint more using Faucet.`, "error");
       return;
     }
 
@@ -459,15 +472,21 @@ export default function App() {
       
       setFiles(prev => [newFile, ...prev]);
 
+      // Deduct the ShelbyUSD fee from the wallet
+      setWallet(prev => ({
+        ...prev,
+        shelbyUsdBalance: Math.max(0, prev.shelbyUsdBalance - uploadFee)
+      }));
+
       const newLog: ActivityLog = {
         id: `log-${Date.now()}`,
         type: "forge",
-        description: `Local cryptographic hash completed for '${fileObj.name}'. Computed SHA-256 leaf, allocated to hot cluster node: ${allocatedBlockNode}.`,
+        description: `Local cryptographic hash completed for '${fileObj.name}'. Storage fee of -${uploadFee.toFixed(2)} ShelbyUSD successfully deducted from wallet. Distributed node allocated: ${allocatedBlockNode}.`,
         timestamp: new Date().toLocaleTimeString(),
         status: "success"
       };
       setLogs(prev => [newLog, ...prev]);
-      triggerToast("File forged and cache nodes secure!", "success");
+      triggerToast(`File forged successfully! Paid ${uploadFee.toFixed(2)} ShelbyUSD.`, "success");
 
     } catch (e: any) {
       triggerToast(`Cryptographic Forge Interrupted: ${e.message}`, "error");
