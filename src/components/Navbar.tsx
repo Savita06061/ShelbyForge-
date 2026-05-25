@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { WalletState } from '../types';
 import { motion } from 'motion/react';
 import { Wallet, LogOut, ChevronRight, Check } from 'lucide-react';
@@ -27,6 +28,7 @@ export default function Navbar({
   showWalletModal,
   setShowWalletModal
 }: NavbarProps) {
+  const { wallets } = useWallet();
   
   // Format long wallet address beautifully
   const formatAddress = (addr: string) => {
@@ -38,13 +40,13 @@ export default function Navbar({
 
   React.useEffect(() => {
     const checkInjection = () => {
-      const injected = typeof window !== 'undefined' && (
+      const injected = wallets.length > 0 || (typeof window !== 'undefined' && (
         (window as any).petra !== undefined ||
         (window as any).aptos !== undefined ||
         (window as any).martian !== undefined ||
         (window as any).pontem !== undefined ||
         (window as any).rise !== undefined
-      );
+      ));
       setIsPetraInjected(injected);
     };
     checkInjection();
@@ -58,7 +60,7 @@ export default function Navbar({
       clearTimeout(fallbackTimer);
       window.removeEventListener("aptosChanged", checkInjection);
     };
-  }, []);
+  }, [wallets]);
 
   let isFrame = false;
   try {
