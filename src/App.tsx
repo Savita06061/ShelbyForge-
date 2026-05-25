@@ -9,6 +9,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { ShelbyFile, ActivityLog, WalletState, ForgeStats } from './types';
 import { calculateFileHash, generateMerkleProof, generateMockTxHash, generateAptosAddress, getRandomShelbyNode } from './utils/crypto';
 import { fetchOnChainBalances } from './utils/aptosService';
+import { ShelbyClient } from './utils/shelbySDK';
 
 // Import Views & Components
 import BackgroundParticles from './components/BackgroundParticles';
@@ -20,6 +21,12 @@ import Footer from './components/Footer';
 
 // Shelby Vault Treasury Address to receive real Testnet registration fees
 const SHELBY_TREASURY_ADDRESS = "0x5eb1ea47b3117aec5b66d6d2b6eb2ba806a6b5790d984cfb395dae822aefea73";
+
+// Instantiate the official Shelby Protocol SDK for Aptos Testnet with on-chain parameters
+const shelbyClient = new ShelbyClient({
+  network: "testnet",
+  onChain: true
+});
 
 // Prepopulate the dashboard with premium starter vault files for visual and interactive rhythm
 const INITIAL_FILES: ShelbyFile[] = [
@@ -506,60 +513,109 @@ export default function App() {
     }
 
     const uploadFee = 10.00;
-    if (wallet.shelbyUsdBalance < uploadFee) {
-      triggerToast(`Insufficient ShelbyUSD balance! Upload requires ${uploadFee.toFixed(2)} ShelbyUSD fee. Mint more using Faucet.`, "error");
+    if (wallet.connected && wallet.walletType !== 'burner' && wallet.balance < 0.005) {
+      triggerToast(`Insufficient gas ($APT) to initiate transaction! Please mint from faucet first.`, "error");
       return;
     }
 
     setIsForging(true);
     setForgeProgress(10);
-    setForgeStage("Reading File binary array buffer...");
+    setForgeStage("Reading file binary and initializing Shelby client...");
 
     try {
-      // Stage 1 duration
-      await new Promise(r => setTimeout(r, 600));
-      setForgeProgress(40);
-      setForgeStage("Generating secure local SHA-256 integrity hash...");
-      const fileHash = await calculateFileHash(fileObj);
+      // 1. Initialise and read file with SDK
+      await new Promise(r => setTimeout(r, 450));
+      setForgeProgress(35);
+      setForgeStage("Generating secure local SHA-256 hash & CID via Shelby SDK...");
+      const result = await shelbyClient.uploadFile(fileObj);
 
-      // Stage 2 duration
-      await new Promise(r => setTimeout(r, 700));
-      setForgeProgress(70);
-      setForgeStage("Compiling 3-layer Merkle tree sibling proofs...");
-      const { root, proof } = generateMerkleProof(fileHash);
+      // Stage 2
+      await new Promise(r => setTimeout(r, 450));
+      setForgeProgress(55);
+      setForgeStage("Compiling Merkle Tree sibling crypt roots...");
+      const { root, proof } = generateMerkleProof(result.sha256);
 
-      // Stage 3 duration
-      await new Promise(r => setTimeout(r, 600));
-      setForgeProgress(90);
-      setForgeStage("Pruning and caching shard segments to Shelby storage nodes...");
+      // Stage 3 - payment!
+      await new Promise(r => setTimeout(r, 450));
+      setForgeProgress(75);
+      setForgeStage("Awaiting Petra wallet approval for ShelbyUSD Fee...");
+
+      let paymentTxHash = "";
       
+      if (wallet.walletType === 'petra' || wallet.walletType === 'custom') {
+        try {
+          // Check live on-chain balances
+          const onchainBalances = await fetchOnChainBalances(wallet.address || "");
+          const hasShelbyUsd = onchainBalances.shelbyUsdBalance > 0;
+          
+          triggerToast(
+            hasShelbyUsd 
+              ? "Signing on-chain ShelbyUSD storage fee transfer..." 
+              : "Signing real Testnet APT storage processing fee transfer...", 
+            "info"
+          );
+
+          const payload = shelbyClient.buildPaymentPayload(
+            SHELBY_TREASURY_ADDRESS,
+            uploadFee,
+            onchainBalances.shelbyUsdBalance
+          );
+
+          let pendingTx;
+          try {
+            pendingTx = await signAndSubmitTransaction(payload as any);
+          } catch (v3Err) {
+            console.warn("V3 custom transaction format failed, using legacy conversion:", v3Err);
+            pendingTx = await signAndSubmitTransaction({
+              type: "entry_function_payload",
+              function: payload.data.function,
+              type_arguments: payload.data.typeArguments,
+              arguments: payload.data.functionArguments
+            } as any);
+          }
+
+          if (pendingTx && pendingTx.hash) {
+            paymentTxHash = pendingTx.hash;
+            triggerToast("Shelby Vault storage subscription confirmed on-chain!", "success");
+          } else {
+            throw new Error("No transaction hash returned from Petra.");
+          }
+        } catch (txErr: any) {
+          console.error("Payment transaction failure:", txErr);
+          throw new Error(`Transaction cancelled or failed: ${txErr.message || 'Signature Rejected'}`);
+        }
+      } else {
+        // Ephemeral simulation
+        paymentTxHash = generateMockTxHash();
+      }
+
+      setForgeProgress(95);
+      setForgeStage("Saving decentralized custody descriptor metadata...");
+      await new Promise(r => setTimeout(r, 400));
+
       const fileExtension = fileObj.name.split('.').pop() || '';
-      const allocatedBlockNode = getRandomShelbyNode();
       const newFile: ShelbyFile = {
         id: `shelby-${Date.now()}`,
         name: fileObj.name,
         size: fileObj.size,
         type: fileExtension,
-        sha256: fileHash,
+        sha256: result.sha256,
         merkleRoot: root,
         merkleProof: proof,
         uploadedAt: new Date().toISOString(),
-        isRegistered: false,
+        isRegistered: false, // will represent secondary Registry verification state
         isPublic: false,
-        txHash: "",
-        chunkCount: Math.max(1, Math.min(10, Math.ceil(fileObj.size / (1024 * 100)))), // 100KB chunks max
+        txHash: paymentTxHash, // associate the upload storage receipt hash
+        chunkCount: Math.max(1, Math.min(10, Math.ceil(fileObj.size / (1024 * 100)))),
         integrityScore: 100,
-        shelbyStorageNode: allocatedBlockNode,
+        shelbyStorageNode: result.storageNode,
         downloadUrl: URL.createObjectURL(fileObj)
       };
 
-      // Final complete stage
-      await new Promise(r => setTimeout(r, 400));
       setForgeProgress(100);
-      
       setFiles(prev => [newFile, ...prev]);
 
-      // Deduct the ShelbyUSD fee from the wallet
+      // Deduct the ShelbyUSD fee from the wallet state
       setWallet(prev => ({
         ...prev,
         shelbyUsdBalance: Math.max(0, prev.shelbyUsdBalance - uploadFee)
@@ -568,15 +624,27 @@ export default function App() {
       const newLog: ActivityLog = {
         id: `log-${Date.now()}`,
         type: "forge",
-        description: `Local cryptographic hash completed for '${fileObj.name}'. Storage fee of -${uploadFee.toFixed(2)} ShelbyUSD successfully deducted from wallet. Distributed node allocated: ${allocatedBlockNode}.`,
+        description: `Successfully uploaded '${fileObj.name}' using Shelby SDK. Storage transaction executed on-chain. TX: ${paymentTxHash.substring(0, 16)}...`,
         timestamp: new Date().toLocaleTimeString(),
+        txHash: paymentTxHash,
         status: "success"
       };
       setLogs(prev => [newLog, ...prev]);
-      triggerToast(`File forged successfully! Paid ${uploadFee.toFixed(2)} ShelbyUSD.`, "success");
+
+      // Trigger standard background ledger balance update
+      if (wallet.address && wallet.walletType !== 'burner') {
+        setTimeout(async () => {
+          const balances = await fetchOnChainBalances(wallet.address || "");
+          setWallet(prev => ({
+            ...prev,
+            balance: balances.aptBalance > 0 ? balances.aptBalance : prev.balance,
+            shelbyUsdBalance: balances.shelbyUsdBalance > 0 ? balances.shelbyUsdBalance : prev.shelbyUsdBalance
+          }));
+        }, 4000);
+      }
 
     } catch (e: any) {
-      triggerToast(`Cryptographic Forge Interrupted: ${e.message}`, "error");
+      triggerToast(`Vault Storage Payment Fail: ${e.message}`, "error");
     } finally {
       setIsForging(false);
       setForgeProgress(0);

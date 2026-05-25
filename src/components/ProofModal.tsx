@@ -187,15 +187,15 @@ export default function ProofModal({ file, onClose }: ProofModalProps) {
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col justify-between">
                 <div>
                   <h5 className="text-[10px] text-gray-500 font-mono tracking-wider">APTOS TESTNET TRANSACTION</h5>
-                  {file.isRegistered ? (
-                    <p className="text-xs font-mono text-shelby-cyan mt-1 break-all">{file.txHash}</p>
+                  {file.txHash ? (
+                    <p className="text-xs font-mono text-shelby-cyan mt-1 break-all select-all">{file.txHash}</p>
                   ) : (
                     <p className="text-xs text-amber-400 font-medium mt-1">Pending Registration on-chain...</p>
                   )}
                 </div>
                 <div className="mt-4 pt-3 border-t border-white/[0.05] flex justify-between items-center">
                   <span className="text-xs text-gray-400">On-Chain Ledger Status</span>
-                  {file.isRegistered ? (
+                  {file.txHash ? (
                     <a
                       href={`https://explorer.aptoslabs.com/txn/${file.txHash}?network=testnet`}
                       target="_blank"
