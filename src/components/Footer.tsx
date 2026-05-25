@@ -54,7 +54,7 @@ export default function Footer() {
             <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#B026FF]">COMMUNITY</h5>
             <div className="flex gap-4">
               <a 
-                href="https://twitter.com" 
+                href="https://x.com/Web3Vibesz0g" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors text-shadow"

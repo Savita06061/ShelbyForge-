@@ -92,3 +92,114 @@
   background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
 }
+
+/* LIGHT THEME OVERRIDES OR BRIGHT SCREEN TUNING (Inspired by the glowing Sun brightness mockup) */
+.light {
+  --color-shelby-dark: #fafbfc;
+  --color-shelby-card: #ffffff;
+  --color-shelby-border: rgba(0, 0, 0, 0.08);
+}
+
+.light, .light main {
+  background-color: #fafbfc !important;
+  color: #1e293b !important;
+}
+
+/* Overriding direct tailwind colors for background, headers and nodes */
+.light .bg-\[\#030303\] {
+  background-color: #fafbfc !important;
+}
+
+.light .bg-\[\#030303\]\/60 {
+  background-color: rgba(250, 251, 253, 0.82) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.light .bg-\[\#09090D\] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.light .border-white\/\[0\.04\],
+.light .border-white\/5,
+.light .border-white\/10,
+.light .border-white\/20,
+.light .border-white\/\[0\.03\] {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.light .text-white,
+.light .text-slate-100 {
+  color: #0f172a !important;
+}
+
+.light .text-gray-200, 
+.light .text-gray-300,
+.light .text-slate-300 {
+  color: #1e293b !important;
+}
+
+.light .text-gray-400 {
+  color: #475569 !important;
+}
+
+.light .text-gray-500 {
+  color: #64748b !important;
+}
+
+.light .bg-white\/\[0\.01\],
+.light .bg-white\/\[0\.02\],
+.light .bg-white\/\[0\.03\],
+.light .bg-white\/5,
+.light .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.03) !important;
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(20px) !important;
+  border-color: rgba(0, 240, 255, 0.15) !important;
+  box-shadow: 0 4px 18px rgba(0, 240, 255, 0.04) !important;
+}
+
+.light .glass-panel-neon {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(30px) !important;
+  border-color: rgba(0, 240, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 240, 255, 0.06) !important;
+}
+
+/* Light Mode Background Particles Adaptations */
+.light .fixed.inset-0.z-0.overflow-hidden {
+  background-color: #f8fafc !important;
+}
+
+.light .cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.07) 1px, transparent 1px) !important;
+  opacity: 0.8 !important;
+}
+
+.light .bg-gradient-to-b.from-transparent.via-\[\#030303\]\/70.to-\[\#030303\],
+.light .bg-gradient-to-b.from-transparent.via-\[\#030303\]\/70 {
+  background-image: linear-gradient(to bottom, transparent, rgba(248, 250, 252, 0.7) 70%, #f8fafc) !important;
+}
+
+.light .cyber-dot-pattern {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.07) 1px, transparent 1px) !important;
+  opacity: 0.8 !important;
+}
+
+/* Glow styles inside Light Mode */
+.light .glow-text,
+.light .text-shadow {
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.15) !important;
+}
+
+.light footer {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(15, 23, 42, 0.06) !important;
+}
+

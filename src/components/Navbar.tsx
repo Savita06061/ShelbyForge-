@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { WalletState } from '../types';
 import { motion } from 'motion/react';
-import { Wallet, LogOut, ChevronRight, Check } from 'lucide-react';
+import { Wallet, LogOut, ChevronRight, Check, Sun, Moon } from 'lucide-react';
 
 interface NavbarProps {
   wallet: WalletState;
@@ -17,6 +17,8 @@ interface NavbarProps {
   setView: (view: 'landing' | 'dashboard') => void;
   showWalletModal: boolean;
   setShowWalletModal: (show: boolean) => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
 export default function Navbar({
@@ -26,7 +28,9 @@ export default function Navbar({
   currentView,
   setView,
   showWalletModal,
-  setShowWalletModal
+  setShowWalletModal,
+  theme,
+  onToggleTheme
 }: NavbarProps) {
   const { wallets } = useWallet();
   
@@ -166,6 +170,16 @@ export default function Navbar({
                 <span>Connect Wallet</span>
               </button>
             )}
+
+            {/* Custom Squirclish Premium Theme Toggle (inspired by user mockup) */}
+            <button
+              onClick={onToggleTheme}
+              className="relative p-2 rounded-2xl border-2 border-slate-300 bg-[#0c141d] hover:bg-[#16222f] active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-[0_0_12px_rgba(0,240,255,0.25)] w-10 h-10 min-w-10 min-h-10 text-[#00F0FF] group"
+              id="theme-brightness-toggle"
+              title={theme === 'dark' ? "Switch to Bright Mode" : "Switch to Dark Mode"}
+            >
+              <Sun className="w-5 h-5 text-[#00F0FF] group-hover:rotate-45 transition-transform duration-500 filter drop-shadow-[0_0_4px_rgba(0,240,255,0.7)]" strokeWidth={2.5} />
+            </button>
           </div>
         </div>
       </div>

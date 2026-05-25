@@ -120,6 +120,27 @@ export default function App() {
   const [view, setView] = useState<'landing' | 'dashboard'>('landing');
   const [files, setFiles] = useState<ShelbyFile[]>(INITIAL_FILES);
   const [logs, setLogs] = useState<ActivityLog[]>(INITIAL_LOGS);
+
+  // Support for light / dark theme state (inspired by user mockup representation)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('shelby-theme') as 'dark' | 'light') || 'dark';
+  });
+
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('shelby-theme', next);
+      return next;
+    });
+  };
   
   // Custom Toast Banner state
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
@@ -637,6 +658,8 @@ export default function App() {
           setView={setView}
           showWalletModal={showWalletModal}
           setShowWalletModal={setShowWalletModal}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
         />
 
         {/* Dynamic Route View rendering */}
