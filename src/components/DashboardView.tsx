@@ -556,7 +556,7 @@ export default function DashboardView({
                       <div className="pt-2 flex justify-between items-center border-t border-white/[0.03]">
                         <span className="text-gray-500 text-[8px]">TX: {log.txHash.substring(0, 16)}...</span>
                         <a 
-                          href={`https://explorer.aptoslabs.com/txn/${log.txHash}?network=testnet`} 
+                          href={`https://explorer.aptoslabs.com/txn/${log.txHash}?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1`} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-shelby-cyan hover:underline hover:text-white flex items-center gap-1 text-[8px] transition-colors"

@@ -126,8 +126,19 @@ export default function App() {
     account: adapterAccount,
     wallet: adapterWallet,
     wallets,
-    signAndSubmitTransaction
+    signAndSubmitTransaction,
+    network
   } = useWallet();
+
+  const isWrongNetwork = !!(
+    adapterConnected && 
+    network && 
+    (
+      network.name?.toLowerCase() !== 'custom' &&
+      !network.url?.includes('shelby') &&
+      !String(network.name || '').toLowerCase().includes('shelby')
+    )
+  );
 
   const [view, setView] = useState<'landing' | 'dashboard'>('landing');
   const [files, setFiles] = useState<ShelbyFile[]>(INITIAL_FILES);
@@ -446,6 +457,10 @@ export default function App() {
       triggerToast("Please connect your wallet first to access the Faucet Hub.", "error");
       return;
     }
+    if (isWrongNetwork) {
+      triggerToast("Faucet disabled! Please switch Petra to Shelby Devnet.", "error");
+      return;
+    }
     setShowFaucetModal(true);
   };
 
@@ -453,6 +468,11 @@ export default function App() {
   const handleAddFile = async (fileObj: File) => {
     if (!wallet.connected) {
       triggerToast("Please connect a wallet to enable the forge.", "error");
+      return;
+    }
+
+    if (isWrongNetwork) {
+      triggerToast("On-chain actions disabled! Please switch Petra to Shelby Devnet.", "error");
       return;
     }
 
@@ -600,6 +620,11 @@ export default function App() {
   const handleRegisterOnChain = async (fileId: string) => {
     const file = files.find(f => f.id === fileId);
     if (!file) return;
+
+    if (isWrongNetwork) {
+      triggerToast("On-chain actions disabled! Please switch Petra to Shelby Devnet.", "error");
+      return;
+    }
 
     let txHashHex = generateMockTxHash();
 
@@ -776,6 +801,32 @@ export default function App() {
           theme={theme}
           onToggleTheme={handleToggleTheme}
         />
+
+        {/* Wrong Network Banner Alert */}
+        {isWrongNetwork && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-red-500/10 border-b border-red-500/30 px-4 py-3 text-red-400 font-mono text-xs flex flex-col md:flex-row md:items-center justify-between gap-3 z-30"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse flex-shrink-0" />
+              <span>
+                <strong className="text-white">Wrong Network Warning:</strong> Active wallet is on <span className="underline font-bold text-gray-200">{network?.name || 'testnet / mainnet'}</span>. ShelbyForge dApp operates exclusively on <strong className="text-white">Shelby Devnet (shelbynet)</strong>.
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-gray-400 text-[10.5px]">Set Petra custom endpoint to: <code className="bg-black/50 text-emerald-400 px-1.5 py-0.5 rounded border border-white/5 font-bold select-all">https://api.shelbynet.shelby.xyz/v1</code></span>
+              <button
+                onClick={handleDisconnectWallet}
+                className="px-2.5 py-1 bg-red-500 hover:bg-red-400 text-black font-extrabold rounded text-[10px] transition-all cursor-pointer uppercase font-display"
+              >
+                Disconnect
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         {/* Dynamic Route View rendering */}
         <div className="flex-grow">

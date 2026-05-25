@@ -123,7 +123,7 @@ export default function Navbar({
             <div className="h-4 w-[1px] bg-white/10" />
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse" />
-              <span className="text-[10px] font-mono font-medium tracking-wider text-[#00F0FF]">APTOS TESTNET</span>
+              <span className="text-[10px] font-mono font-medium tracking-wider text-[#00F0FF]">SHELBY DEVNET</span>
             </div>
           </div>
 

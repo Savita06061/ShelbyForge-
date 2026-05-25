@@ -55,8 +55,8 @@ export default function FaucetModal({
     setFaucetResult(null);
 
     try {
-      // POST Request for Minting to Aptos Testnet official Faucet
-      const response = await fetch(`https://faucet.testnet.aptoslabs.com/mint?amount=100000000&address=${wallet.address}`, {
+      // POST Request for Minting to Shelby Devnet official Faucet
+      const response = await fetch(`https://faucet.shelbynet.shelby.xyz/mint?amount=100000000&address=${wallet.address}`, {
         method: 'POST'
       });
 
@@ -75,7 +75,7 @@ export default function FaucetModal({
         
         onAddLog({
           type: "faucet",
-          description: `Minted +1.00 TESTNET APT directly into address: ${wallet.address.substring(0, 12)}...`,
+          description: `Minted +1.00 DEVNET APT directly into address: ${wallet.address.substring(0, 12)}...`,
           txHash: txHash || undefined,
           status: "success"
         });
@@ -95,7 +95,7 @@ export default function FaucetModal({
     } catch (err: any) {
       setFaucetResult({ 
         success: false, 
-        error: err?.message || "Local network anomaly preventing connection to faucet.testnet.aptoslabs.com" 
+        error: err?.message || "Local network anomaly preventing connection to faucet.shelbynet.shelby.xyz" 
       });
     } finally {
       setClaimingApt(false);
@@ -235,8 +235,8 @@ export default function FaucetModal({
               <Coins className="w-6 h-6 animate-pulse" />
             </div>
             <div>
-              <h3 className="font-display text-xl font-bold tracking-tight text-white">Shelby Testnet Faucet Portal</h3>
-              <p className="text-xs text-gray-400">Request free gas tokens ($APT) and client storage fees ($ShelbyUSD)</p>
+              <h3 className="font-display text-xl font-bold tracking-tight text-white">Shelby Devnet Faucet Portal</h3>
+              <p className="text-xs text-gray-400">Request free gas tokens ($APT) and client storage fees ($ShelbyUSD) on shelbynet</p>
             </div>
           </div>
 
@@ -272,10 +272,10 @@ export default function FaucetModal({
                 <div>
                   <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-slow font-mono" />
-                    Aptos Testnet Gas ($APT)
+                    Shelby Devnet Gas ($APT)
                   </h4>
                   <p className="text-[11px] text-gray-400 mt-2 leading-relaxed">
-                    Aptos Coin ($APT) is required to run smart contract interactions and pay for tx gas fees on the Testnet ledger.
+                    Aptos Coin ($APT) is required to run smart contract interactions and pay for tx gas fees on the Shelby Devnet ledger.
                   </p>
                   
                   <div className="mt-3 py-1.5 px-2.5 rounded bg-black/30 border border-white/5 font-mono text-[11px] flex justify-between">
@@ -291,16 +291,16 @@ export default function FaucetModal({
                     className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 disabled:bg-white/10 disabled:cursor-not-allowed text-black font-semibold rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>{claimingApt ? "Minting Gas..." : "Claim 1.00 TEST APT"}</span>
+                    <span>{claimingApt ? "Minting Gas..." : "Claim 1.00 DEV APT"}</span>
                   </button>
 
                   <a
-                    href="https://faucet.aptoslabs.com/"
+                    href="https://explorer.aptoslabs.com/?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1"
                     target="_blank"
                     rel="noreferrer"
                     className="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white font-medium rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 text-center mt-1"
                   >
-                    <span>Aptos Faucet Site</span>
+                    <span>Shelby Devnet Explorer</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -360,12 +360,12 @@ export default function FaucetModal({
               >
                 {faucetResult.success ? (
                   <div>
-                    <p className="font-bold">✓ Direct Testnet Mint Confirmation Received!</p>
+                    <p className="font-bold">✓ Direct Devnet Mint Confirmation Received!</p>
                     {faucetResult.hash && (
                       <p className="mt-1 flex items-center gap-1">
                         <span>TX Hash:</span>
                         <a
-                          href={`https://explorer.aptoslabs.com/txn/${faucetResult.hash}?network=testnet`}
+                          href={`https://explorer.aptoslabs.com/txn/${faucetResult.hash}?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1`}
                           target="_blank"
                           rel="noreferrer"
                           className="underline flex items-center gap-0.5 hover:text-white"
@@ -391,7 +391,7 @@ export default function FaucetModal({
             <div className="p-3.5 rounded-xl bg-orange-500/5 border border-orange-500/10 flex gap-2.5">
               <ShieldAlert className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
               <p className="text-[10px] text-gray-400 leading-relaxed">
-                <strong className="text-orange-300">Testnet Ecosystem Notice:</strong> The official Aptos Testnet Faucet coordinates node operations with real-time rate protection. If the direct faucet API suffers delays or rate-limiting, simply click "Aptos Faucet Site" to fill your Petra wallet with native APT directly.
+                <strong className="text-orange-300">Devnet Ecosystem Notice:</strong> The custom Shelby Devnet (shelbynet) Faucet coordinates operations directly with the shelby node ledger. If direct faucet API requests suffer delays or rate-limiting, please ensure your Petra Wallet endpoint settings are correctly aligned to: <code className="text-emerald-400 font-mono">https://api.shelbynet.shelby.xyz/v1</code>.
               </p>
             </div>
 

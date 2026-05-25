@@ -197,7 +197,7 @@ export default function ProofModal({ file, onClose }: ProofModalProps) {
                   <span className="text-xs text-gray-400">On-Chain Ledger Status</span>
                   {file.txHash ? (
                     <a
-                      href={`https://explorer.aptoslabs.com/txn/${file.txHash}?network=testnet`}
+                      href={`https://explorer.aptoslabs.com/txn/${file.txHash}?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-shelby-cyan hover:text-white flex items-center gap-1 font-mono transition-colors"

@@ -20,7 +20,9 @@ export class ShelbyClient {
   constructor(config: ShelbySDKConfig) {
     this.config = config;
     const aptosConfig = new AptosConfig({
-      network: config.network === "mainnet" ? Network.MAINNET : Network.TESTNET,
+      network: Network.CUSTOM,
+      fullnode: "https://api.shelbynet.shelby.xyz/v1",
+      indexer: "https://api.shelbynet.shelby.xyz/v1/graphql"
     });
     this.aptos = new Aptos(aptosConfig);
   }
@@ -137,6 +139,6 @@ export class ShelbyClient {
    * Helper utility to format Aptos Explorer urls
    */
   getExplorerUrl(txHash: string): string {
-    return `https://explorer.aptoslabs.com/txn/${txHash}?network=testnet`;
+    return `https://explorer.aptoslabs.com/txn/${txHash}?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1`;
   }
 }
