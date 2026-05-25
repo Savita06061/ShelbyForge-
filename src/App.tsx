@@ -17,6 +17,7 @@ import Navbar from './components/Navbar';
 import LandingView from './components/LandingView';
 import DashboardView from './components/DashboardView';
 import ProofModal from './components/ProofModal';
+import FaucetModal from './components/FaucetModal';
 import Footer from './components/Footer';
 
 // Shelby Vault Treasury Address to receive real Testnet registration fees
@@ -156,6 +157,7 @@ export default function App() {
   // Custom Toast Banner state
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
   const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showFaucetModal, setShowFaucetModal] = useState(false);
   const [activeProofFile, setActiveProofFile] = useState<ShelbyFile | null>(null);
 
   // Loading animation states during file forge process
@@ -438,71 +440,13 @@ export default function App() {
     triggerToast("Wallet disconnected.", "info");
   };
 
-  // Claim Testnet faucet
-  const handleClaimFaucet = async () => {
-    if (!wallet.connected || !wallet.address) return;
-
-    triggerToast("Requesting official Aptos Testnet faucet mint...", "info");
-
-    let faucetTx = generateMockTxHash();
-    let realMintSuccess = false;
-
-    if (wallet.walletType === 'petra' || wallet.walletType === 'custom') {
-      try {
-        const response = await fetch(`https://faucet.testnet.aptoslabs.com/mint?amount=100000000&address=${wallet.address}`, {
-          method: 'POST'
-        });
-        if (response.ok) {
-          const text = await response.text();
-          if (text) {
-            try {
-              const resJson = JSON.parse(text);
-              faucetTx = Array.isArray(resJson) ? resJson[0] : (resJson.hash || faucetTx);
-            } catch {
-              faucetTx = text.startsWith("0x") ? text : faucetTx;
-            }
-          }
-          realMintSuccess = true;
-          triggerToast("Official Aptos Faucet mint (+1.00 APT) confirmed!", "success");
-        } else {
-          console.warn("Aptos Faucet returned status:", response.status);
-        }
-      } catch (err) {
-        console.warn("Endpoint faucet mint bypassed, using high-fidelity fallback:", err);
-      }
+  // Open Faucet dialog center
+  const handleClaimFaucet = () => {
+    if (!wallet.connected) {
+      triggerToast("Please connect your wallet first to access the Faucet Hub.", "error");
+      return;
     }
-
-    // Top up balances
-    setWallet(prev => ({
-      ...prev,
-      balance: prev.balance + (realMintSuccess ? 1.00 : 10.00),
-      shelbyUsdBalance: prev.shelbyUsdBalance + 100.00
-    }));
-
-    const newLog: ActivityLog = {
-      id: `log-${Date.now()}`,
-      type: "faucet",
-      description: realMintSuccess
-        ? `Secured physical Aptos Testnet Faucet Mint (+1.00 APT verified on-chain & +100.00 ShelbyUSD allocated).`
-        : `Secured Aptos Testnet Faucet Mint (+10.00 APT & +100.00 ShelbyUSD). Transferred into secure wallet.`,
-      timestamp: new Date().toLocaleTimeString(),
-      txHash: faucetTx,
-      status: "success"
-    };
-
-    setLogs(prev => [newLog, ...prev]);
-
-    // Perform verification query after block commitment delay
-    setTimeout(async () => {
-      if (wallet.address && (wallet.walletType === 'petra' || wallet.walletType === 'custom')) {
-        const balances = await fetchOnChainBalances(wallet.address);
-        setWallet(prev => ({
-          ...prev,
-          balance: balances.aptBalance > 0 ? balances.aptBalance : prev.balance,
-          shelbyUsdBalance: balances.shelbyUsdBalance > 0 ? balances.shelbyUsdBalance : prev.shelbyUsdBalance
-        }));
-      }
-    }, 4500);
+    setShowFaucetModal(true);
   };
 
   // Perform browser cryptographic forge process
@@ -868,6 +812,24 @@ export default function App() {
       <ProofModal 
         file={activeProofFile} 
         onClose={() => setActiveProofFile(null)} 
+      />
+
+      {/* Shelby Faucet Hub Modal */}
+      <FaucetModal 
+        isOpen={showFaucetModal}
+        onClose={() => setShowFaucetModal(false)}
+        wallet={wallet}
+        onRefreshBalances={handleRefreshBalances}
+        signAndSubmitTransaction={signAndSubmitTransaction}
+        onAddLog={(newLog) => {
+          const logItem = {
+            id: `log-${Date.now()}`,
+            timestamp: new Date().toLocaleTimeString(),
+            ...newLog
+          };
+          setLogs(prev => [logItem, ...prev]);
+        }}
+        setWallet={setWallet}
       />
 
     </main>
