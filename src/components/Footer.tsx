@@ -8,7 +8,7 @@ import { Twitter, ShieldCheck } from 'lucide-react';
 export default function Footer() {
   return (
     <footer className="relative border-t border-white/[0.04] bg-[#030303] text-gray-500 font-sans mt-auto">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1550px] px-4 py-12 sm:px-6 lg:px-8">
         
         {/* Core Layout Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 pb-8 border-b border-white/[0.03]">

@@ -113,7 +113,7 @@ export default function DashboardView({
   };
 
   return (
-    <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 font-sans text-gray-200">
+    <div className="relative z-10 max-w-[1550px] mx-auto px-4 py-8 sm:px-6 lg:px-8 font-sans text-gray-200">
       
       {/* Dynamic Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">

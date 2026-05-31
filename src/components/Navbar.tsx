@@ -75,7 +75,7 @@ export default function Navbar({
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-white/[0.04] bg-[#030303]/60 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1550px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           
           {/* Shelby Logo */}

@@ -58,7 +58,7 @@ export default function LandingView({ wallet, setView, setShowWalletModal }: Lan
     <div className="relative z-10 font-sans text-gray-200">
       
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative px-4 pt-20 pb-16 md:pt-32 md:pb-24 max-w-7xl mx-auto flex flex-col items-center text-center">
+      <section className="relative px-4 pt-20 pb-16 md:pt-32 md:pb-24 max-w-[1550px] mx-auto flex flex-col items-center text-center">
         
         {/* Subtle Decorative Badge */}
         <motion.div
@@ -155,7 +155,7 @@ export default function LandingView({ wallet, setView, setShowWalletModal }: Lan
 
       {/* 2. CORE FEATURES SECTION (GRID) */}
       <section className="py-16 border-t border-b border-white/[0.03] bg-black/[0.15]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white mb-4">
@@ -200,7 +200,7 @@ export default function LandingView({ wallet, setView, setShowWalletModal }: Lan
       </section>
 
       {/* 3. DYNAMIC METRIC & VALUE PROPOSITION */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           <div className="lg:col-span-5 space-y-6">
