@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Twitter, ShieldCheck } from 'lucide-react';
+import { Twitter, ShieldCheck, Github } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -40,8 +40,8 @@ export default function Footer() {
 
           {/* Social Social Links */}
           <div className="space-y-3">
-            <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#6366f1]">COMMUNITY</h5>
-            <div className="flex gap-4">
+            <h5 className="font-display text-xs font-semibold uppercase tracking-widest text-[#6366f1]">TEAM SHELBYFORGE COMMUNITY</h5>
+            <div className="flex gap-3">
               <a 
                 href="https://x.com/Web3Vibesz0g" 
                 target="_blank" 
@@ -50,6 +50,35 @@ export default function Footer() {
                 title="X (Twitter) Profile"
               >
                 <Twitter className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
+              </a>
+              <a 
+                href="https://github.com/Savita06061/ShelbyForge-" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors text-shadow"
+                title="GitHub"
+              >
+                <Github className="w-4 h-4 text-gray-400 hover:text-shelby-cyan" />
+              </a>
+              <a 
+                href="https://t.me" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white transition-colors text-shadow"
+                title="Telegram"
+              >
+                <svg 
+                  className="w-4 h-4 text-gray-400 hover:text-shelby-cyan transition-colors" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="m22 2-7 20-4-9-9-4Z" />
+                  <path d="M22 2 11 13" />
+                </svg>
               </a>
             </div>
             <div className="text-[11px] font-mono text-gray-400 flex items-center gap-1">
