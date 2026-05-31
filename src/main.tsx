@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')!).render(
     <AptosWalletAdapterProvider 
       autoConnect={false}
       dappConfig={{
-        network: Network.CUSTOM,
+        network: 'shelbynet' as any,
         aptosConfig: {
           fullnode: SHELBY_DEVNET_FULLNODE,
           indexer: SHELBY_DEVNET_INDEXER
