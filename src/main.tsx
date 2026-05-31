@@ -1,37 +1,27 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
 import { Buffer } from 'buffer';
 
-// Buffer Polyfill
 if (typeof window !== 'undefined') {
   (window as any).Buffer = Buffer;
-  (window as any).global = window;
 }
 
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
 import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
-import { PetraWallet } from '@aptos-labs/wallet-adapter-wallets';
-import { AptosConfig } from '@aptos-labs/ts-sdk';
-
+import { Network } from '@aptos-labs/ts-sdk';
+import { SHELBY_DEVNET_FULLNODE, SHELBY_DEVNET_INDEXER } from './utils/networkConfig.ts';
 import App from './App.tsx';
 import './index.css';
 
-// Shelby Devnet Config
-const aptosConfig = new AptosConfig({
-  network: "custom" as any,
-  fullnode: "https://api.shelbynet.shelby.xyz/v1",
-  indexer: "https://api.shelbynet.shelby.xyz/v1/graphql",
-});
-
-const wallets = [new PetraWallet()];
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AptosWalletAdapterProvider
-      plugins={wallets}
-      autoConnect={false}
+    <AptosWalletAdapterProvider 
+      autoConnect={true}
       dappConfig={{
-        network: aptosConfig.network,
-        aptosConfig: aptosConfig,
+        network: Network.CUSTOM,
+        aptosConfig: {
+          fullnode: SHELBY_DEVNET_FULLNODE,
+          indexer: SHELBY_DEVNET_INDEXER
+        }
       }}
     >
       <App />

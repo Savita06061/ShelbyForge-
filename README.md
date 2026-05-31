@@ -1,84 +1,20 @@
-# SHELBYFORGE
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-**Forge Your Verifiable Storage • Powered by Shelby + Aptos**
+# Run and deploy your AI Studio app
 
-ShelbyForge is a decentralized verifiable hot vault that enables users to securely upload files, generate cryptographic hashes, and register proof references using blockchain infrastructure.
+This contains everything you need to run your app locally.
 
----
+View your app in AI Studio: https://ai.studio/apps/05f470f5-1e04-4f22-97ee-d17fc7ea447e
 
-## 🧠 Overview
+## Run Locally
 
-ShelbyForge allows users to:
+**Prerequisites:**  Node.js
 
-- Upload files securely  
-- Generate cryptographic hashes (client-side)  
-- Interact with Aptos wallet (Petra)  
-- Trigger transaction flow for proof registration  
-- Store files using Shelby’s decentralized storage  
 
-The goal is to create a simple system where digital files can be secured and later verified.
-
----
-
-## ⚙️ How It Works
-
-1. User connects Petra wallet  
-2. File is uploaded through the UI  
-3. A cryptographic hash is generated in the browser  
-4. Transaction flow is triggered (wallet interaction)  
-5. File is sent to Shelby storage  
-6. Reference data can be used later for verification  
-
----
-
-## 🔐 Key Features
-
-- Client-side cryptographic hashing  
-- Wallet-based authentication (Petra)  
-- Transaction interaction on Aptos Testnet  
-- Shelby decentralized storage integration  
-- Simple and clean dashboard UI  
-
----
-
-## 🌐 Live Demo
-
-👉 https://shelbyforge.vercel.app/
-
----
-
-## 🛠️ Tech Stack
-
-- Next.js / React  
-- Aptos Wallet (Petra)  
-- Shelby Protocol  
-- Vercel Deployment  
-
----
-
-## ⚠️ Current Status
-
-- Transaction flow integrated  
-- Wallet connection working  
-- Storage integration in progress / testing phase  
-
----
-
-## 🚀 Future Improvements
-
-- Full on-chain proof verification  
-- Real-time balance display (APT & ShelbyUSD)  
-- Improved transaction tracking  
-- Enhanced UI/UX  
-
----
-
-## 🤝 Contributing
-
-Open to feedback and improvements.
-
----
-
-## 📌 Note
-
-This project is actively being developed and tested on Aptos Testnet and Shelby network.
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

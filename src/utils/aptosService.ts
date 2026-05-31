@@ -1,12 +1,12 @@
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import { Buffer } from 'buffer';
 
-// Initialize the Aptos client for Shelby Devnet (shelbynet)
-const config = new AptosConfig({ 
-  network: Network.CUSTOM,
-  fullnode: "https://api.shelbynet.shelby.xyz/v1",
-  indexer: "https://api.shelbynet.shelby.xyz/v1/graphql"
-});
-export const aptos = new Aptos(config);
+if (typeof window !== 'undefined') {
+  (window as any).Buffer = (window as any).Buffer || Buffer;
+}
+
+import { aptosClient, COIN_TYPES } from "./networkConfig";
+
+export const aptos = aptosClient;
 
 /**
  * Interface representing live fetched balances from the Shelby Devnet chain.
