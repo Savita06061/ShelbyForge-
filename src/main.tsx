@@ -15,7 +15,7 @@ import './index.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AptosWalletAdapterProvider 
-      autoConnect={true}
+      autoConnect={false}
       dappConfig={{
         network: Network.CUSTOM,
         aptosConfig: {
