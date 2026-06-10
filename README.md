@@ -1,91 +1,20 @@
-# SHELBYFORGE
-ShelbyForge is a decentralized **verifiable hot vault** built on **Aptos** and **Shelby Protocol**.
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-## 🧠 Current Status
+# Run and deploy your AI Studio app
 
-**In Progress** 🚧
+This contains everything you need to run your app locally.
 
-- ✅ **Wallet Connect** (Petra) - Working
-- 🔄 Transaction flow & Proof Registration - In Progress
-- 🔄 Shelby Storage Integration - In Progress
-- 🔄 Full Verification System - Upcoming
+View your app in AI Studio: https://ai.studio/apps/05f470f5-1e04-4f22-97ee-d17fc7ea447e
 
----
+## Run Locally
 
-## 🧠 Overview
+**Prerequisites:**  Node.js
 
-ShelbyForge allows users to:
-- Securely upload files
-- Generate cryptographic hashes **client-side**
-- Connect Petra Wallet
-- Register proof references on Aptos Testnet
-- Store files on Shelby’s decentralized hot storage
 
-Goal: Make digital files verifiable and tamper-proof using blockchain.
-
----
-
-## ⚙️ How It Works (Current Flow)
-
-1. Connect **Petra Wallet**
-2. Upload file through UI
-3. Cryptographic hash generated in browser
-4. Transaction flow triggered (In Progress)
-5. File stored on Shelby decentralized storage
-
----
-
-## 🔐 Key Features (Implemented)
-
-- Petra Wallet Integration
-- Client-side cryptographic hashing
-- Clean & modern dashboard UI
-- Testnet deployment on Vercel
-
----
-
-## 🌐 Live Demo
-
-👉 [https://shelbyforge.vercel.app/
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js + React + TypeScript
-- **Wallet**: Petra Wallet (Aptos)
-- **Blockchain**: Aptos Testnet
-- **Storage**: Shelby Protocol
-- **Deployment**: Vercel
-
----
-
-## 📋 Roadmap / Upcoming
-
-- Full transaction & proof registration
-- Shelby storage complete integration
-- On-chain proof verification page
-- Transaction history
-- Real-time balance display (APT + ShelbyUSD)
-- File preview support
-- Improved UI/UX
-
----
-
-## 🤝 Contributing
-
-This project is actively under development.  
-Feedback, suggestions, and contributions are welcome!
-
----
-
-## 📌 Note
-
-**Work in Progress** — Currently testing on **Aptos Testnet**.  
-Only use test tokens. Do not send real APT.
-
-Project is open for early feedback.
-
----
-
-**Made with ❤️ for Aptos & Shelby Ecosystem**
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

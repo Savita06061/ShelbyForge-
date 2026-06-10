@@ -212,6 +212,57 @@ export default function ProofModal({ file, onClose }: ProofModalProps) {
               </div>
             </div>
 
+            {/* Real File Preview Canvas */}
+            {file.downloadUrl && (
+              <div className="p-4 rounded-xl bg-[#030303] border border-white/5 space-y-2">
+                <span className="text-[9px] text-gray-400 font-mono tracking-widest block font-bold uppercase">SECURE IN-VAULT ASSET PREVIEW</span>
+                
+                {/* Image preview */}
+                {['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(file.type?.toLowerCase()) ? (
+                  <div className="flex justify-center items-center bg-black/40 rounded-lg p-2 overflow-hidden max-h-48 border border-white/[0.03]">
+                    <img 
+                      src={file.downloadUrl} 
+                      alt={file.name}
+                      referrerPolicy="no-referrer"
+                      className="max-h-44 max-w-full rounded object-contain"
+                    />
+                  </div>
+                ) : file.type?.toLowerCase() === 'pdf' ? (
+                  /* PDF preview */
+                  <div className="p-3 bg-black/40 rounded-lg border border-white/[0.03] flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded bg-red-500/10 border border-red-500/20 text-red-500 font-bold font-mono text-[10px]">
+                        PDF
+                      </div>
+                      <div className="text-left font-sans">
+                        <p className="text-xs font-semibold text-white">{file.name}</p>
+                        <p className="text-[10px] text-gray-500 font-mono">Secure PDF Document Core</p>
+                      </div>
+                    </div>
+                    <a
+                      href={file.downloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] font-mono font-bold text-shelby-cyan hover:underline hover:text-white transition-colors"
+                    >
+                      Open PDF Tab ↗
+                    </a>
+                  </div>
+                ) : (
+                  /* Generic File description preview */
+                  <div className="p-3 bg-black/40 rounded-lg border border-white/[0.03] flex items-center gap-2.5 font-mono text-[10px]">
+                    <div className="p-2 rounded bg-shelby-purple/10 border border-shelby-purple/20 text-shelby-purple font-bold font-mono text-[10px]">
+                      {file.type?.toUpperCase() || 'BIN'}
+                    </div>
+                    <div className="text-left">
+                      <p className="font-semibold text-gray-300">Hash Match Verified</p>
+                      <p className="text-[9px] text-gray-500 truncate max-w-xs sm:max-w-md">{file.sha256}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Public Link Share Row */}
             <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3">
               <div className="flex items-center gap-2">

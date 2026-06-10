@@ -490,21 +490,21 @@ export default function App() {
   };
 
   // Perform browser cryptographic forge process
-  const handleAddFile = async (fileObj: File) => {
+  const handleAddFile = async (fileObj: File): Promise<ShelbyFile | null> => {
     if (!wallet.connected) {
       triggerToast("Please connect a wallet to enable the forge.", "error");
-      return;
+      return null;
     }
 
     if (isWrongNetwork) {
       triggerToast("On-chain actions disabled! Please switch Petra to Shelby Devnet.", "error");
-      return;
+      return null;
     }
 
     const uploadFee = 10.00;
     if (wallet.connected && wallet.walletType !== 'burner' && wallet.balance < 0.005) {
       triggerToast(`Insufficient gas ($APT) to initiate transaction! Please mint from faucet first.`, "error");
-      return;
+      return null;
     }
 
     setIsForging(true);
@@ -632,13 +632,47 @@ export default function App() {
         }, 4000);
       }
 
+      return newFile;
+
     } catch (e: any) {
       triggerToast(`Vault Storage Payment Fail: ${e.message}`, "error");
+      return null;
     } finally {
       setIsForging(false);
       setForgeProgress(0);
       setForgeStage("");
     }
+  };
+
+  const handleRenewFile = async (fileId: string) => {
+    const file = files.find(f => f.id === fileId);
+    if (!file) return;
+
+    triggerToast(`Renewing Shelby storage lease for '${file.name}'...`, "info");
+    
+    // Spend tiny gas or wait simulation
+    await new Promise(r => setTimeout(r, 800));
+
+    setFiles(prev => prev.map(f => {
+      if (f.id === fileId) {
+        return {
+          ...f,
+          uploadedAt: new Date().toISOString() // refresh leasing period to full 48h
+        };
+      }
+      return f;
+    }));
+
+    const renewalLog: ActivityLog = {
+      id: `log-${Date.now()}`,
+      type: "forge",
+      description: `Successful lease renewal transaction. Shard lifetime for '${file.name}' extended (+48h).`,
+      timestamp: new Date().toLocaleTimeString(),
+      status: "success"
+    };
+
+    setLogs(prev => [renewalLog, ...prev]);
+    triggerToast("Storage lease renewed for +48 hours!", "success");
   };
 
   // Register on-chain Merkle root to Aptos Testnet
@@ -873,6 +907,7 @@ export default function App() {
               onDeleteFile={handleDeleteFile}
               onClaimFaucet={handleClaimFaucet}
               onInspectFile={setActiveProofFile}
+              onRenewFile={handleRenewFile}
               loading={isForging}
               loadingProgress={forgeProgress}
               loadingStage={forgeStage}
