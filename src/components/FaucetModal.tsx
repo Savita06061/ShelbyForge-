@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Copy, Check, Coins, ShieldAlert, KeySquare, ExternalLink, HelpCircle, Flame, Plus, RefreshCw, Layers } from 'lucide-react';
 import { WalletState } from '../types';
+import { getAptosExplorerUrl } from '../utils/networkConfig';
 
 interface FaucetModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface FaucetModalProps {
     status: 'success' | 'pending' | 'failed';
   }) => void;
   setWallet: React.Dispatch<React.SetStateAction<WalletState>>;
+  networkNameOrUrl?: string;
 }
 
 export default function FaucetModal({
@@ -30,7 +32,8 @@ export default function FaucetModal({
   onRefreshBalances,
   signAndSubmitTransaction,
   onAddLog,
-  setWallet
+  setWallet,
+  networkNameOrUrl
 }: FaucetModalProps) {
   const [copied, setCopied] = useState(false);
   const [claimingApt, setClaimingApt] = useState(false);
@@ -321,12 +324,12 @@ export default function FaucetModal({
                   </button>
 
                   <a
-                    href="https://explorer.aptoslabs.com/?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1"
+                    href={getAptosExplorerUrl(wallet.address || "", "account", networkNameOrUrl)}
                     target="_blank"
                     rel="noreferrer"
                     className="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white font-medium rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 text-center mt-1"
                   >
-                    <span>Shelby Devnet Explorer</span>
+                    <span>Aptos Explorer</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -391,7 +394,7 @@ export default function FaucetModal({
                       <p className="mt-1 flex items-center gap-1">
                         <span>TX Hash:</span>
                         <a
-                          href={`https://explorer.aptoslabs.com/txn/${faucetResult.hash}?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1`}
+                          href={getAptosExplorerUrl(faucetResult.hash, "txn", networkNameOrUrl)}
                           target="_blank"
                           rel="noreferrer"
                           className="underline flex items-center gap-0.5 hover:text-white"

@@ -4,7 +4,7 @@ if (typeof window !== 'undefined') {
   (window as any).Buffer = (window as any).Buffer || Buffer;
 }
 
-import { aptosClient, COIN_TYPES } from "./networkConfig";
+import { aptosClient, COIN_TYPES, getDynamicAptosClient } from "./networkConfig";
 
 export const aptos = aptosClient;
 
@@ -23,22 +23,24 @@ export interface OnChainBalances {
  * Uses getAccountCoinAmount for high-fidelity coin retrieval as requested.
  * Handles "account not found" scenario gracefully.
  */
-export async function fetchOnChainBalances(address: string): Promise<OnChainBalances> {
+export async function fetchOnChainBalances(address: string, networkNameOrUrl?: string): Promise<OnChainBalances> {
   if (!address || !address.startsWith("0x")) {
     return { aptBalance: 0, shelbyUsdBalance: 0, activeOnChain: false, rawResources: [] };
   }
+
+  const activeAptos = getDynamicAptosClient(networkNameOrUrl);
 
   try {
     // 1. Fetch APT balance using getAccountCoinAmount
     let rawApt = 0;
     try {
-      rawApt = await aptos.getAccountCoinAmount({
+      rawApt = await activeAptos.getAccountCoinAmount({
         accountAddress: address,
         coinType: "0x1::aptos_coin::AptosCoin"
       });
     } catch (e) {
       try {
-        rawApt = await aptos.getAccountCoinAmount({
+        rawApt = await activeAptos.getAccountCoinAmount({
           accountAddress: address,
           coinType: "0xa::aptos_coin::AptosCoin"
         });
@@ -51,7 +53,7 @@ export async function fetchOnChainBalances(address: string): Promise<OnChainBala
     // 2. Fetch ShelbyUSD token balance using getAccountCoinAmount
     let rawShelby = 0;
     try {
-      rawShelby = await aptos.getAccountCoinAmount({
+      rawShelby = await activeAptos.getAccountCoinAmount({
         accountAddress: address,
         coinType: "0x1b18363a9f1fe5e6ebf247daba5cc1c18052bb232efdc4c50f556053922d98e1::shelby_usd::ShelbyUSD"
       });
@@ -62,7 +64,7 @@ export async function fetchOnChainBalances(address: string): Promise<OnChainBala
 
     let resources: any[] = [];
     try {
-      resources = await aptos.getAccountResources({ accountAddress: address });
+      resources = await activeAptos.getAccountResources({ accountAddress: address });
     } catch (e) {
       // Ignore if account has no resources initialized yet
     }

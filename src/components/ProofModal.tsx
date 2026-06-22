@@ -7,13 +7,15 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShelbyFile } from '../types';
 import { X, Copy, Check, ShieldCheck, Database, Link, ExternalLink, Cpu } from 'lucide-react';
+import { getAptosExplorerUrl } from '../utils/networkConfig';
 
 interface ProofModalProps {
   file: ShelbyFile | null;
   onClose: () => void;
+  networkNameOrUrl?: string;
 }
 
-export default function ProofModal({ file, onClose }: ProofModalProps) {
+export default function ProofModal({ file, onClose, networkNameOrUrl }: ProofModalProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   if (!file) return null;
@@ -197,7 +199,7 @@ export default function ProofModal({ file, onClose }: ProofModalProps) {
                   <span className="text-xs text-gray-400">On-Chain Ledger Status</span>
                   {file.txHash ? (
                     <a
-                      href={`https://explorer.aptoslabs.com/txn/${file.txHash}?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1`}
+                      href={getAptosExplorerUrl(file.txHash, "txn", networkNameOrUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-shelby-cyan hover:text-white flex items-center gap-1 font-mono transition-colors"

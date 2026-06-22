@@ -137,7 +137,12 @@ export default function App() {
       network.url?.includes("shelbynet.shelby.xyz") ||
       network.url?.includes("shelby") ||
       String(network.name || '').toLowerCase().includes("shelby") ||
-      (network.name?.toLowerCase() === 'custom' && network.url?.includes('shelby'))
+      (network.name?.toLowerCase() === 'custom' && network.url?.includes('shelby')) ||
+      // Also accept standard Aptos Testnet or Devnet
+      String(network.name || '').toLowerCase().includes("testnet") ||
+      String(network.name || '').toLowerCase().includes("devnet") ||
+      network.url?.includes("testnet") ||
+      network.url?.includes("devnet")
     )
   );
 
@@ -160,9 +165,9 @@ export default function App() {
       if (announcedNetworkKey !== currentKey) {
         setAnnouncedNetworkKey(currentKey);
         if (!isWrongNetwork) {
-          triggerToast(" Connected to Shelby Devnet", "success");
+          triggerToast(` Connected to Valid Aptos Network (${network.name || 'testnet'})`, "success");
         } else {
-          triggerToast(" Please switch to Shelby Devnet", "error");
+          triggerToast(" Please switch to Aptos Testnet / Devnet or Shelby Devnet", "error");
         }
       }
     } else if (!adapterConnected) {
@@ -219,7 +224,7 @@ export default function App() {
       if (adapterConnected && adapterAccount) {
         const addressStr = adapterAccount.address?.toString() || "";
         if (addressStr) {
-          const balances = await fetchOnChainBalances(addressStr);
+          const balances = await fetchOnChainBalances(addressStr, network?.name || network?.url);
           if (!isActive) return;
           
           setWallet(prev => {
@@ -333,7 +338,7 @@ export default function App() {
       let liveShelbyUsdBalance = 0;
       
       try {
-        const balances = await fetchOnChainBalances(customAddress);
+        const balances = await fetchOnChainBalances(customAddress, network?.name || network?.url);
         liveAptBalance = balances.aptBalance;
         liveShelbyUsdBalance = balances.shelbyUsdBalance;
       } catch (err) {
@@ -437,7 +442,7 @@ export default function App() {
         return;
       }
       triggerToast("Syncing live assets with Shelby Devnet...", "info");
-      const balances = await fetchOnChainBalances(wallet.address);
+      const balances = await fetchOnChainBalances(wallet.address, network?.name || network?.url);
       setWallet(prev => ({
         ...prev,
         balance: balances.aptBalance,
@@ -534,7 +539,7 @@ export default function App() {
       if (wallet.walletType === 'petra' || wallet.walletType === 'custom') {
         try {
           // Check live on-chain balances
-          const onchainBalances = await fetchOnChainBalances(wallet.address || "");
+          const onchainBalances = await fetchOnChainBalances(wallet.address || "", network?.name || network?.url);
           const hasShelbyUsd = onchainBalances.shelbyUsdBalance > 0;
           
           triggerToast(
@@ -623,7 +628,7 @@ export default function App() {
       // Trigger standard background ledger balance update
       if (wallet.address && wallet.walletType !== 'burner') {
         setTimeout(async () => {
-          const balances = await fetchOnChainBalances(wallet.address || "");
+          const balances = await fetchOnChainBalances(wallet.address || "", network?.name || network?.url);
           setWallet(prev => ({
             ...prev,
             balance: balances.aptBalance,
@@ -721,7 +726,7 @@ export default function App() {
         
         // Re-fetch balance
         try {
-          const balances = await fetchOnChainBalances(wallet.address || "");
+          const balances = await fetchOnChainBalances(wallet.address || "", network?.name || network?.url);
           setWallet(prev => ({
             ...prev,
             balance: balances.aptBalance,
@@ -872,11 +877,11 @@ export default function App() {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse flex-shrink-0" />
               <span>
-                <strong className="text-white">Wrong Network Warning:</strong> Active wallet is on <span className="underline font-bold text-gray-200">{network?.name || 'testnet / mainnet'}</span>. ShelbyForge dApp operates exclusively on <strong className="text-white">Shelby Devnet (shelbynet)</strong>.
+                <strong className="text-white">Wrong Network Warning:</strong> Active wallet is on <span className="underline font-bold text-gray-200">{network?.name || 'testnet / mainnet'}</span>. ShelbyForge operates exclusively on <strong className="text-white">Aptos Testnet, Devnet</strong>, or <strong className="text-white">Shelby Devnet</strong>.
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-gray-400 text-[10.5px]">Set Petra custom endpoint to: <code className="bg-black/50 text-emerald-400 px-1.5 py-0.5 rounded border border-white/5 font-bold select-all">https://api.shelbynet.shelby.xyz/v1</code></span>
+              <span className="text-gray-400 text-[10.5px]">Please switch your Petra network inside the extension settings!</span>
               <button
                 onClick={handleDisconnectWallet}
                 className="px-2.5 py-1 bg-red-500 hover:bg-red-400 text-black font-extrabold rounded text-[10px] transition-all cursor-pointer uppercase font-display"
@@ -912,6 +917,7 @@ export default function App() {
               loadingProgress={forgeProgress}
               loadingStage={forgeStage}
               onRefreshBalances={handleRefreshBalances}
+              networkNameOrUrl={network?.name || network?.url}
             />
           )}
         </div>
@@ -923,6 +929,7 @@ export default function App() {
       <ProofModal 
         file={activeProofFile} 
         onClose={() => setActiveProofFile(null)} 
+        networkNameOrUrl={network?.name || network?.url}
       />
 
       {/* Shelby Faucet Hub Modal */}
@@ -941,6 +948,7 @@ export default function App() {
           setLogs(prev => [logItem, ...prev]);
         }}
         setWallet={setWallet}
+        networkNameOrUrl={network?.name || network?.url}
       />
 
     </main>

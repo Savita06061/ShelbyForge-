@@ -7,6 +7,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShelbyFile, ActivityLog, WalletState, ForgeStats } from '../types';
 import { calculateFileHash } from '../utils/crypto';
+import { getAptosExplorerUrl } from '../utils/networkConfig';
 import { 
   Upload, FileText, CheckCircle2, ShieldAlert, Cpu, 
   Database, RefreshCw, Eye, EyeOff, Search, Trash2, 
@@ -29,6 +30,7 @@ interface DashboardViewProps {
   loadingProgress: number;
   loadingStage: string;
   onRefreshBalances?: () => Promise<void>;
+  networkNameOrUrl?: string;
 }
 
 export default function DashboardView({
@@ -46,7 +48,8 @@ export default function DashboardView({
   loading,
   loadingProgress,
   loadingStage,
-  onRefreshBalances
+  onRefreshBalances,
+  networkNameOrUrl
 }: DashboardViewProps) {
   const [activeTab, setActiveTab] = useState<'vault' | 'verify'>('vault');
   const [searchQuery, setSearchQuery] = useState('');
@@ -676,7 +679,7 @@ export default function DashboardView({
                           <div className="pt-2 flex justify-between items-center border-t border-white/[0.03]">
                             <span className="text-gray-500 text-[8px]">TX: {log.txHash.substring(0, 16)}...</span>
                             <a 
-                              href={`https://explorer.aptoslabs.com/txn/${log.txHash}?network=custom&node=https%3A%2F%2Fapi.shelbynet.shelby.xyz%2Fv1`} 
+                              href={getAptosExplorerUrl(log.txHash, "txn", networkNameOrUrl)} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="text-shelby-cyan hover:underline hover:text-white flex items-center gap-1 text-[8px] transition-colors"
